@@ -21,7 +21,7 @@ RSpec.describe 'Rails Drivers' do
 
     it 'loads constants in drivers/*/app/models' do
       create_file 'drivers/store/app/models/product.rb', product_model
-      run_command 'rails g migration create_products name:string'
+      run_command 'driver store g migration create_products name:string'
       run_command 'rails db:migrate'
 
       expect(run_ruby %{puts Product.create(name: "success").name}).to eq "success\n"
