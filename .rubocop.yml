@@ -1,0 +1,9 @@
+AllCops:
+  Exclude:
+    - spec/dummy/bin/*
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 130
