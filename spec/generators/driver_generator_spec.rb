@@ -19,9 +19,21 @@ RSpec.describe 'rails g driver' do
     expect(dummy_app).to have_file 'drivers/driver_name/config/initializers/driver_name_feature.rb'
   end
 
-  context 'the model' do
+  context 'the namespace' do
     it 'has the right table_name_prefix' do
       expect(run_ruby %(puts DriverName.table_name_prefix)).to eq "driver_name_\n"
+    end
+  end
+
+  context 'the initializer' do
+    it 'populates RailsDrivers.loaded' do
+      expect(run_ruby %(puts RailsDrivers.loaded.inspect)).to eq "[:driver_name]\n"
+    end
+  end
+
+  context 'the routes.rb' do
+    it 'draws from the Rails application' do
+      expect(read_file('drivers/driver_name/config/routes.rb')).to include "Dummy::Application.routes.draw do\n"
     end
   end
 end

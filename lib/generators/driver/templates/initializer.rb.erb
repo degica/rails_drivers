@@ -1,7 +1,7 @@
 # The core app (or other drivers) can check the presence of the
 # <%= class_name %> driver with the following code snippit
 #
-#   do_something if FeatureToggle.on?(:<%= file_name %>)
+#   do_something if RailsDrivers.loaded.include(:<%= file_name %>)
 #
 # use with caution!
-RailsDrivers.loaded[:<%= file_name %>] = true
+RailsDrivers.loaded << :<%= file_name %>

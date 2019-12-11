@@ -5,7 +5,7 @@ require 'rails_drivers/railtie'
 
 module RailsDrivers
   def self.loaded
-    @loaded ||= {}
+    @loaded ||= []
   end
 
   def self.freeze!
