@@ -3,7 +3,7 @@
 module RailsDrivers
   class Routes
     def self.load_driver_routes
-      return if defined?(ISOLATE_DRIVER)
+      return if defined?(REPLACE_DEFAULT_PATH_WITH_DRIVER)
 
       Dir[Rails.root.join('drivers/*')].each do |path|
         load "#{path}/config/routes.rb" if File.exist?("#{path}/config/routes.rb")
