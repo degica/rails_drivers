@@ -1,0 +1,38 @@
+name: Lint and test
+
+on: pull_request
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Ruby 2.5
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.5.x
+      - name: Install sqlite3
+        run: sudo apt-get install -y libsqlite3-dev
+      - name: Build
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: Rubocop
+        run: bundle exec rubocop
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Ruby 2.5
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.5.x
+      - name: Install sqlite3
+        run: sudo apt-get install -y libsqlite3-dev
+      - name: Build
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: RSpec
+        run: bundle exec rspec
