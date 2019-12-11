@@ -2,6 +2,9 @@ AllCops:
   Exclude:
     - spec/dummy/bin/*
 
+Style/BlockComments:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 
