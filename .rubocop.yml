@@ -9,5 +9,9 @@ Style/BlockComments:
 Style/Documentation:
   Enabled: false
 
+Style/RescueModifier:
+  Exclude:
+    - spec/spec_helper.rb
+
 Metrics/LineLength:
   Max: 130

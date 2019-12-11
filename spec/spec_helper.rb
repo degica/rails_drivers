@@ -16,6 +16,9 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
+require 'securerandom'
+require 'pry' rescue LoadError
+
 Dir["#{__dir__}/support/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
