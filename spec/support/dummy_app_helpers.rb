@@ -67,8 +67,8 @@ module DummyAppHelpers
   def setup_dummy_app
     random_string = SecureRandom.hex.chars.first(4).join
     @dummy_app = File.expand_path File.join(__dir__, "../dummy-#{random_string}")
+    FileUtils.rm_r @dummy_app if File.exist?(@dummy_app)
     FileUtils.cp_r dummy_app_template, @dummy_app
-    run_command 'rake db:migrate'
   end
 
   def teardown_dummy_app
