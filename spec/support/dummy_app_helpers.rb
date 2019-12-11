@@ -38,6 +38,23 @@ module DummyAppHelpers
     run_command("rails runner \"#{code.gsub('"', '\\\"')}\"")
   end
 
+  #
+  # HTTP requests
+  #
+
+  def http(method, path)
+    run_ruby <<-RUBY
+      include Rack::Test::Methods
+      def app; Rails.application; end
+      #{method} #{path.inspect}
+      puts last_response.body
+    RUBY
+  end
+
+  #
+  # Reading and writing files
+  #
+
   def create_file(file_name, contents)
     full_path = File.expand_path(File.join(dummy_app, file_name))
 
