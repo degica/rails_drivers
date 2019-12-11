@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 $LOAD_PATH.push File.expand_path('lib', __dir__)
 
 # Maintain your gem's version:
@@ -25,6 +27,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
+  spec.executables << 'exe/driver'
 
   spec.add_dependency 'rails', '~> 5.2.3'
 

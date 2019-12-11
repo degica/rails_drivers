@@ -46,5 +46,23 @@ And then execute:
 $ bundle install
 ```
 
+Add this line to your routes.rb
+
+```ruby
+require 'rails_drivers/routes'
+```
+
+(Optional) Add these lines to your `spec/rails_helper.rb`
+
+```ruby
+Dir[Rails.root.join("drivers/*/spec/support/*.rb")].each { |f| require f }
+
+RSpec.configure do |config|
+  Dir[Rails.root.join('drivers/*/spec')].each { |x| config.project_source_dirs << x }
+  Dir[Rails.root.join('drivers/*/lib')].each { |x| config.project_source_dirs << x }
+  Dir[Rails.root.join('drivers/*/app')].each { |x| config.project_source_dirs << x }
+end
+```
+
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

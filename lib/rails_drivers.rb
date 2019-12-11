@@ -1,5 +1,14 @@
+# frozen_string_literal: true
+
+require 'rails_drivers/setup'
 require 'rails_drivers/railtie'
 
 module RailsDrivers
-  # Your code goes here...
+  def self.loaded
+    @loaded ||= {}
+  end
+
+  def self.freeze!
+    @loaded = @loaded&.freeze
+  end
 end

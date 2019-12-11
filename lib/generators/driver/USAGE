@@ -1,0 +1,15 @@
+Description:
+    Generates the directory structure for a new driver.
+
+Example:
+    rails generate driver new_feature
+
+    This will create:
+        drivers/new_feature
+        drivers/new_feature/app
+        drivers/new_feature/app/controllers/new_feature
+        drivers/new_feature/app/models/new_feature
+        drivers/new_feature/app/views/new_feature
+        drivers/new_feature/config
+        drivers/new_feature/spec
+        drivers/new_feature/lib

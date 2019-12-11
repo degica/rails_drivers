@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - spec/dummy/bin/*
+  TargetRubyVersion: 2.5
 
 Style/BlockComments:
   Enabled: false
