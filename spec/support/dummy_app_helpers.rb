@@ -11,10 +11,10 @@ module DummyAppHelpers
   def run_command(cmd)
     raise 'No dummy app' if dummy_app.nil?
 
-    stdin, stdout, wait = Open3.popen2('sh', '-c', "bundle exec #{cmd}", chdir: dummy_app)
+    stdin, stdout, wait = Open3.popen2e('sh', '-c', "bundle exec #{cmd}", chdir: dummy_app)
     yield stdin if block_given?
     code = wait.value
-    raise "Exited with code #{code}: #{cmd}" if code != 0
+    raise "Exited with code #{code}: #{cmd}\n#{stdout.read}" if code != 0
 
     stdout.read
   ensure
@@ -22,8 +22,18 @@ module DummyAppHelpers
     stdout&.close
   end
 
-  def run_ruby
-    raise 'No dummy app' if dummy_app.nil?
+  def run_ruby(code)
+    run_command("rails runner \"#{code.gsub('"', '\\\"')}\"")
+  end
+
+  def create_file(file_name, contents)
+    full_path = File.expand_path(File.join(dummy_app, file_name))
+
+    dir = full_path.split('/')
+    dir.pop
+    FileUtils.mkdir_p(dir.join('/'))
+
+    File.open(full_path, 'w') { |f| f.write contents }
   end
 
   #

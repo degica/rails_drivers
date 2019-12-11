@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - spec/dummy/bin/*
+    - spec/dummy-*/**/*
   TargetRubyVersion: 2.5
 
 Style/BlockComments:
@@ -12,6 +13,18 @@ Style/Documentation:
 Style/RescueModifier:
   Exclude:
     - spec/spec_helper.rb
+
+Style/NestedParenthesizedCalls:
+  Exclude:
+    - spec/**/*
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+
+Metrics/AbcSize:
+  Exclude:
+    - lib/generators/**/*
 
 Metrics/LineLength:
   Max: 130
