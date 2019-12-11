@@ -14,3 +14,4 @@ gemspec
 # your gem to rubygems.org.
 
 gem 'pry-byebug', group: %i[development test]
+gem 'rubocop'
