@@ -19,6 +19,8 @@
 Dir["#{__dir__}/support/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
+  config.include DummyAppHelpers
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
@@ -50,6 +52,14 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
   config.default_formatter = 'doc' if config.files_to_run.size <= 5
+
+  config.before(:each) do
+    setup_dummy_app
+  end
+
+  config.after(:each) do
+    teardown_dummy_app
+  end
 
   config.order = :random
 
