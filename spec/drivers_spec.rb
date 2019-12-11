@@ -3,28 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe 'Rails Drivers' do
-  context 'running commands' do
-    it 'works' do
-      expect(File.exist?("#{dummy_app}/app/models/test.rb")).to be_falsey
-      run_command('rails g model Test name:string')
-      expect(File.exist?("#{dummy_app}/app/models/test.rb")).to be_truthy
-    end
-  end
-
-  context 'running ruby code' do
-    it 'works' do
-      expect(run_ruby('puts "whats up"')).to eq "whats up\n"
-    end
-  end
-
-  context 'creating files' do
-    it 'works' do
-      create_file 'lib/test.rb', 'puts "hello"'
-      expect(IO.read("#{dummy_app}/lib/test.rb")).to eq 'puts "hello"'
-    end
-  end
-
-  context 'a dummy rails app' do
+  context 'a rails app' do
     let(:product_model) do
       <<-RUBY
       class Product < ApplicationRecord

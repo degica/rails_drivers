@@ -5,6 +5,18 @@ require 'open3'
 
 module DummyAppHelpers
   #
+  # Custom matchers
+  #
+
+  def self.included(_class)
+    RSpec::Matchers.define :have_file do |file_path|
+      match do |dummy_app_path|
+        File.exist? File.expand_path(File.join(dummy_app_path, file_path))
+      end
+    end
+  end
+
+  #
   # Running commands
   #
 
@@ -34,6 +46,10 @@ module DummyAppHelpers
     FileUtils.mkdir_p(dir.join('/'))
 
     File.open(full_path, 'w') { |f| f.write contents }
+  end
+
+  def read_file(file_name)
+    IO.read(File.join(dummy_app, file_name))
   end
 
   #
