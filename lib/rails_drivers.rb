@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rails_drivers/version'
 require 'rails_drivers/setup'
 require 'rails_drivers/railtie'
 
