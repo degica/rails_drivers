@@ -4,11 +4,11 @@
 APP_PATH = File.expand_path('config/application')
 require_relative "#{Dir.pwd}/config/boot"
 
-ISOLATE_DRIVER = ARGV.shift
+REPLACE_DEFAULT_PATH_WITH_DRIVER = ARGV.shift
 
 possible_drivers = Dir['drivers/*'].map { |d| d.split('/').last }
-unless possible_drivers.include?(ISOLATE_DRIVER)
-  puts "Unknown driver #{ISOLATE_DRIVER}. Must be one of [#{possible_drivers.join(', ')}]"
+unless possible_drivers.include?(REPLACE_DEFAULT_PATH_WITH_DRIVER)
+  puts "Unknown driver #{REPLACE_DEFAULT_PATH_WITH_DRIVER}. Must be one of [#{possible_drivers.join(', ')}]"
   exit 1
 end
 
