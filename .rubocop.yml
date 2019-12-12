@@ -21,6 +21,11 @@ Style/NestedParenthesizedCalls:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
+    - lib/tasks/*.rake
+
+Style/MixinUsage:
+  Exclude:
+    - lib/tasks/*.rake
 
 Metrics/AbcSize:
   Exclude:
