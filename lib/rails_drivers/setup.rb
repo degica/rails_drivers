@@ -4,6 +4,7 @@ module RailsDrivers
   module Setup
     DRIVER_PATHS = %w[
       app
+      app/assets
       app/models
       app/views
       app/controllers
