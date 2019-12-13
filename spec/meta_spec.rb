@@ -26,9 +26,9 @@ RSpec.describe 'spec/support/dummy_app_helpers.rb' do
 
   context 'the dummy app' do
     it 'renders webpack assets' do
+      run_command 'bin/webpack'
       html = http :get, '/'
-      %r{<script .+(?<script_file>packs/home-.+\.js).+</script>} =~ html
-      expect(script_file).to_not be_nil
+      script_file = find_js_pack html, 'home'
       expect(http :get, script_file).to include 'Hello from home.js!'
     end
   end

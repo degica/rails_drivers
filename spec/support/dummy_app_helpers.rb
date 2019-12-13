@@ -52,6 +52,12 @@ module DummyAppHelpers
     RUBY
   end
 
+  def find_js_pack(html, pack_name)
+    match = %r{<script .+(?<script_file>packs/#{pack_name}-.+\.js).+</script>}.match(html)
+    expect(match).to_not be_nil, -> { "Couldn't find a script tag for #{pack_name}-*.js in HTML:\n\n#{html}" }
+    match[:script_file]
+  end
+
   #
   # Reading and writing files
   #
