@@ -24,13 +24,14 @@ module DummyAppHelpers
     raise 'No dummy app' if dummy_app.nil?
 
     stdin, stdout, wait = Open3.popen2e('sh', '-c', "bundle exec #{cmd}", chdir: dummy_app)
-    yield stdin if block_given?
-    code = wait.value
-    raise "Exited with code #{code}: #{cmd}\n#{stdout.read}" if code != 0
+    stdin.close
 
-    stdout.read
+    lines = truncate_lines(stdout)
+    code = wait.value
+    raise "Exited with code #{code}: #{cmd}\n#{lines.join}" if code != 0
+
+    lines.join
   ensure
-    stdin&.close
     stdout&.close
   end
 
@@ -49,6 +50,12 @@ module DummyAppHelpers
       #{method} #{path.inspect}
       puts last_response.body
     RUBY
+  end
+
+  def find_js_pack(html, pack_name)
+    match = %r{<script .+(?<script_file>packs/#{pack_name}-.+\.js).+</script>}.match(html)
+    expect(match).to_not be_nil, -> { "Couldn't find a script tag for #{pack_name}-*.js in HTML:\n\n#{html}" }
+    match[:script_file]
   end
 
   #
@@ -93,5 +100,23 @@ module DummyAppHelpers
 
     FileUtils.rm_r @dummy_app
     @dummy_app = nil
+  end
+
+  #
+  # Private
+  #
+
+  private
+
+  def truncate_lines(stream, limit: 200)
+    lines = []
+
+    stream.each_line do |line|
+      lines << line unless lines.size > limit
+    end
+
+    lines[-1] = '...' if lines.size > limit
+
+    lines
   end
 end

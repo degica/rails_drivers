@@ -30,6 +30,10 @@ jobs:
           ruby-version: 2.5.x
       - name: Install sqlite3
         run: sudo apt-get install -y libsqlite3-dev
+      - name: Install nodejs dependencies
+        run: |
+          cd spec/dummy
+          npm install
       - name: Build
         run: |
           gem install bundler

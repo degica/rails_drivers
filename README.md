@@ -4,20 +4,20 @@
 
 Each driver is like a mini Rails app that has full access to the main app. A driver has its own `app`, `config`, `spec`, and `db` folder.
 
-Technically speaking, drivers are just a way to put code into a different folder, but there are some rules we like to follow in order to reduce application complexity:
+Technically speaking, drivers are just a fancy name for putting code into a different folder. The advantage of doing this is that it provides clear-cut separation of concerns. If we follow a couple of simple rules, we can actually test that separation:
 
 - Drivers should not touch other drivers
 - The main app should not touch drivers directly
 
 The "main app" refers to the files inside your `<project root>/app` directory.
 
-Thankfully, we can test that these rules are adhered to by removing drivers before running the test suite.
+If your test suite is good, you can test that these rules are adhered to by selectively adding and removing drivers before running your tests.
 
 ## Aren't these just engines?
 
 Very similar, yes. They use the same Rails facilities for adding new `app` paths, etc.
 
-But Drivers have one useful property: they can be freely added and removed from your project without breaking anything.
+But Drivers have less friction. They can be freely added and removed from your project without breaking anything. There's no need to mess around with gems, vendoring, or dummy apps.
 
 ## Usage
 
@@ -72,13 +72,15 @@ And then execute:
 $ bundle install
 ```
 
-Add this line to your routes.rb
+Add this line to your routes.rb:
 
 ```ruby
 require 'rails_drivers/routes'
 ```
 
-(Optional) Add these lines to your `spec/rails_helper.rb`
+### RSpec
+
+If you use RSpec, add these lines to your `spec/rails_helper.rb` or `spec/spec_helper.rb`:
 
 ```ruby
 Dir[Rails.root.join("drivers/*/spec/support/*.rb")].each { |f| require f }
@@ -88,6 +90,44 @@ RSpec.configure do |config|
   Dir[Rails.root.join('drivers/*/lib')].each { |x| config.project_source_dirs << x }
   Dir[Rails.root.join('drivers/*/app')].each { |x| config.project_source_dirs << x }
 end
+```
+
+### Webpacker
+
+If you use Webpacker, take a look at this snippet. You'll want to add the code between the comments:
+
+```javascript
+// config/webpack/environment.js
+const { environment } = require('@rails/webpacker')
+
+//// Begin driver code ////
+const { config } = require('@rails/webpacker')
+const { sync } = require('glob')
+const { basename, dirname, join, relative, resolve } = require('path')
+const extname = require('path-complete-extname')
+
+const getExtensionsGlob = () => {
+  const { extensions } = config
+  return extensions.length === 1 ? `**/*${extensions[0]}` : `**/*{${extensions.join(',')}}`
+}
+
+const addToEntryObject = (sourcePath) => {
+  const glob = getExtensionsGlob()
+  const rootPath = join(sourcePath, config.source_entry_path)
+  const paths = sync(join(rootPath, glob))
+  paths.forEach((path) => {
+    const namespace = relative(join(rootPath), dirname(path))
+    const name = join(namespace, basename(path, extname(path)))
+    environment.entry.set(name, resolve(path))
+  })
+}
+
+sync('drivers/*').forEach((driverPath) => {
+  addToEntryObject(join(driverPath, config.source_path));
+})
+//// End driver code ////
+
+module.exports = environment
 ```
 
 ## License

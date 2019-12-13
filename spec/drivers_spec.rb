@@ -31,7 +31,8 @@ RSpec.describe 'A Rails Driver' do
   let(:product_routes) do
     <<-RUBY
       Dummy::Application.routes.draw do
-        get :products, to: 'products#index'
+        get 'products',     to: 'products#index'
+        get 'products/new', to: 'products#new'
       end
     RUBY
   end
@@ -42,8 +43,27 @@ RSpec.describe 'A Rails Driver' do
         def index
           render inline: Product.pluck(:name).join("\\n")
         end
+
+        def new
+        end
       end
     RUBY
+  end
+
+  let(:products_pack) do
+    <<-JAVASCRIPT
+      console.log("Hello from products pack!");
+    JAVASCRIPT
+  end
+
+  let(:products_new_view) do
+    <<-HTML_ERB
+      <%= content_for(:head) do %>
+        <%= javascript_pack_tag 'products' %>
+      <% end %>
+
+      <article>Pretend there's a product form here</article>
+    HTML_ERB
   end
 
   before do
@@ -67,14 +87,27 @@ RSpec.describe 'A Rails Driver' do
   it_behaves_like 'an engine', 'app/controllers',               'app/controllers/concerns'
   it_behaves_like 'an engine', 'drivers/store/app/controllers', 'drivers/store/app/controllers/concerns'
 
-  it 'sets up routes' do
-    create_file 'app/models/product.rb',                    product_model
-    create_file 'drivers/store/app/controllers/product.rb', products_controller
-    create_file 'drivers/store/config/routes.rb',           product_routes
+  context 'with a controller in a driver' do
+    before do
+      create_file 'app/models/product.rb',                                product_model
+      create_file 'drivers/store/app/controllers/products_controller.rb', products_controller
+      create_file 'drivers/store/config/routes.rb',                       product_routes
+    end
 
-    expect(run_command 'rake routes').to include 'products'
+    it 'sets up routes' do
+      expect(run_command 'rake routes').to include 'products'
 
-    run_ruby %(Product.create(name: 'success').name)
-    expect(http :get, '/products').to include 'success'
+      run_ruby %(Product.create(name: 'success').name)
+      expect(http :get, '/products').to include 'success'
+    end
+
+    it 'renders webpacker packs in drivers' do
+      create_file 'drivers/store/app/views/products/new.html.erb', products_new_view
+      create_file 'drivers/store/app/frontend/packs/products.js', products_pack
+      run_command 'bin/webpack'
+
+      script_file = find_js_pack http(:get, '/products/new'), 'products'
+      expect(http :get, script_file).to include 'Hello from products pack!'
+    end
   end
 end
