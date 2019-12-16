@@ -66,6 +66,28 @@ RSpec.describe 'A Rails Driver' do
     HTML_ERB
   end
 
+  let(:test_mailer) do
+    <<-RUBY
+      class TestMailer < ApplicationMailer
+        def some_message
+          mail to: 'recipient@example.com', from: 'sender@example.com'
+        end
+      end
+    RUBY
+  end
+
+  let(:test_mailer_html) do
+    <<-HTML_ERB
+      <article>This is the mailer view content in html</article>
+    HTML_ERB
+  end
+
+  let(:test_mailer_text) do
+    <<-HTML_ERB
+      This is the mailer view content in text
+    HTML_ERB
+  end
+
   before do
     run_command 'rails g migration create_products name:string'
     run_command 'rails db:migrate'
@@ -108,6 +130,20 @@ RSpec.describe 'A Rails Driver' do
 
       script_file = find_js_pack http(:get, '/products/new'), 'products'
       expect(http :get, script_file).to include 'Hello from products pack!'
+    end
+  end
+
+  context 'with a mailer in a driver' do
+    before do
+      create_file 'drivers/something/app/mailers/test_mailer.rb', test_mailer
+      create_file 'drivers/something/app/views/test_mailer/some_message.html.erb', test_mailer_html
+      create_file 'drivers/something/app/views/test_mailer/some_message.text.erb', test_mailer_text
+    end
+
+    it 'can send mail properly' do
+      delivery = run_ruby %(puts TestMailer.some_message.deliver_now)
+      expect(delivery).to include 'This is the mailer view content in html'
+      expect(delivery).to include 'This is the mailer view content in text'
     end
   end
 end
