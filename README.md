@@ -76,6 +76,9 @@ Add this line to your routes.rb:
 
 ```ruby
 require 'rails_drivers/routes'
+
+# This can go before or after your application's route definitions
+RailsDrivers::Routes.load_driver_routes
 ```
 
 ### RSpec
