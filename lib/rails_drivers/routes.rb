@@ -11,6 +11,3 @@ module RailsDrivers
     end
   end
 end
-
-# This is meant to be executed as soon as the file is required
-RailsDrivers::Routes.load_driver_routes
