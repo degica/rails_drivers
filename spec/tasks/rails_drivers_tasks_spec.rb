@@ -27,7 +27,7 @@ RSpec.describe 'tasks/rails_drivers_tasks.rake' do
 
     context 'and an invalid driver name is given' do
       it 'prints an error' do
-        expect(run_command('rake driver:isolate[bad]')).to include 'Driver not found'
+        expect(run_command('rake driver:isolate[bad]')).to include 'Driver "bad" not found'
       end
     end
   end
