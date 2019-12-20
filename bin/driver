@@ -1,15 +1,34 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-APP_PATH = File.expand_path('config/application')
-require_relative "#{Dir.pwd}/config/boot"
+require 'rails_drivers/files'
 
-REPLACE_DEFAULT_PATH_WITH_DRIVER = ARGV.shift
+selected_driver = ARGV.shift
 
-possible_drivers = Dir['drivers/*'].map { |d| d.split('/').last }
-unless possible_drivers.include?(REPLACE_DEFAULT_PATH_WITH_DRIVER)
-  puts "Unknown driver #{REPLACE_DEFAULT_PATH_WITH_DRIVER}. Must be one of [#{possible_drivers.join(', ')}]"
-  exit 1
+if ARGV[0] == 'do'
+  #
+  # Run any command with only one driver present
+  #
+  ARGV.shift # Pop off the 'do'
+  at_exit { RailsDrivers::Files.restore }
+  RailsDrivers::Files.isolate selected_driver
+
+  Process.wait Process.spawn(*ARGV)
+  exit Process.last_status.exitstatus
+else
+  #
+  # Run 'rails' command as if the driver was the rails app.
+  #
+  APP_PATH = File.expand_path('config/application')
+  REPLACE_DEFAULT_PATH_WITH_DRIVER = selected_driver
+
+  require_relative "#{Dir.pwd}/config/boot"
+
+  possible_drivers = Dir['drivers/*'].map { |d| d.split('/').last }
+  unless possible_drivers.include?(REPLACE_DEFAULT_PATH_WITH_DRIVER)
+    puts "Unknown driver #{REPLACE_DEFAULT_PATH_WITH_DRIVER}. Must be one of [#{possible_drivers.join(', ')}]"
+    exit 1
+  end
+
+  require 'rails/commands'
 end
-
-require 'rails/commands'

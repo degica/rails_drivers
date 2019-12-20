@@ -5,11 +5,13 @@ require 'rails_drivers/setup'
 require 'rails_drivers/railtie'
 
 module RailsDrivers
-  def self.loaded
-    @loaded ||= []
-  end
+  class << self
+    def loaded
+      @loaded ||= []
+    end
 
-  def self.freeze!
-    @loaded = @loaded&.freeze
+    def freeze!
+      @loaded = @loaded&.freeze
+    end
   end
 end
