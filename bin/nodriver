@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'rails_drivers/files'
+
+ARGV.shift if ARGV[0] == 'do'
+
+at_exit { RailsDrivers::Files.restore }
+RailsDrivers::Files.clear
+Process.wait Process.spawn(*ARGV)
+exit Process.last_status.exitstatus

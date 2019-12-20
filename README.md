@@ -54,6 +54,11 @@ rake driver:restore
 rake driver:isolate[admin]
 rspec --pattern '{spec,drivers/*/spec}/**{,/*/**}/*_spec.rb'
 rake driver:restore
+
+# Short-hand with 'driver' utility!
+bundle exec driver admin do rspec --pattern '{spec,drivers/*/spec}/**{,/*/**}/*_spec.rb'
+# (can run with no drivers as well)
+bundle exec nodriver do rspec --pattern '{spec,drivers/*/spec}/**{,/*/**}/*_spec.rb'
 ```
 
 This lets you to ensure that the store and admin function properly without each other. Note we're running all of the main app's specs twice. This is good because we also want to make sure the main app is not reaching into drivers.

@@ -9,7 +9,7 @@ module RailsDrivers
 
     def isolate(driver)
       raise Error, 'No driver specified' if driver.nil? || driver == ''
-      raise Error, 'Driver not found' unless File.exist?("drivers/#{driver}")
+      raise Error, "Driver #{driver.inspect} not found" unless File.exist?("drivers/#{driver}")
 
       FileUtils.mkdir_p 'tmp/drivers'
       Dir['drivers/*'].each do |driver_path|

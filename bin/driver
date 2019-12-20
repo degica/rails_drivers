@@ -9,9 +9,14 @@ if ARGV[0] == 'do'
   #
   # Run any command with only one driver present
   #
-  ARGV.shift # Pop off the 'do'
+  ARGV.shift
   at_exit { RailsDrivers::Files.restore }
-  RailsDrivers::Files.isolate selected_driver
+
+  if selected_driver == '_clear'
+    RailsDrivers::Files.clear
+  else
+    RailsDrivers::Files.isolate selected_driver
+  end
 
   Process.wait Process.spawn(*ARGV)
   exit Process.last_status.exitstatus
