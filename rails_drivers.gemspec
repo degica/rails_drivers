@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   spec.executables << 'driver'
+  spec.executables << 'nodriver'
 
   spec.add_dependency 'rails', '~> 5.2'
 
