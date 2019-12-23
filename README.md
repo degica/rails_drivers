@@ -88,12 +88,15 @@ RailsDrivers::Routes.load_driver_routes
 
 ### RSpec
 
-If you use RSpec, add these lines to your `spec/rails_helper.rb` or `spec/spec_helper.rb`:
+If you use RSpec with FactoryBot, add these lines to your `spec/rails_helper.rb` or `spec/spec_helper.rb`:
 
 ```ruby
 Dir[Rails.root.join("drivers/*/spec/support/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
+  FactoryBot.definition_file_paths += Dir['drivers/*/spec/factories']
+  FactoryBot.reload
+
   Dir[Rails.root.join('drivers/*/spec')].each { |x| config.project_source_dirs << x }
   Dir[Rails.root.join('drivers/*/lib')].each { |x| config.project_source_dirs << x }
   Dir[Rails.root.join('drivers/*/app')].each { |x| config.project_source_dirs << x }
