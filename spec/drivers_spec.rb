@@ -83,9 +83,9 @@ RSpec.describe 'A Rails Driver' do
   end
 
   let(:test_mailer_text) do
-    <<-HTML_ERB
+    <<-TEXT_ERB
       This is the mailer view content in text
-    HTML_ERB
+    TEXT_ERB
   end
 
   before do
@@ -144,6 +144,63 @@ RSpec.describe 'A Rails Driver' do
       delivery = run_ruby %(puts TestMailer.some_message.deliver_now)
       expect(delivery).to include 'This is the mailer view content in html'
       expect(delivery).to include 'This is the mailer view content in text'
+    end
+  end
+
+  context 'with a model, spec, and factory all in a driver' do
+    let(:product_model_spec) do
+      <<-RUBY
+        require 'spec_helper'
+
+        RSpec.describe Product, type: :model do
+          context 'factory in driver', :in_driver do
+            it 'works' do
+              expect(build :product).to be_a Product
+            end
+          end
+
+          context 'factory out of driver', :not_in_driver do
+            it 'works' do
+              expect(build :funny_product).to be_a Product
+            end
+          end
+        end
+      RUBY
+    end
+
+    let(:product_factory) do
+      <<-RUBY
+        FactoryBot.define do
+          factory :product do
+            name { 'product' }
+          end
+        end
+      RUBY
+    end
+
+    let(:funny_product_factory) do
+      <<-RUBY
+        FactoryBot.define do
+          factory :funny_product, class: Product do
+            name { 'hilarious' }
+          end
+        end
+      RUBY
+    end
+
+    before do
+      create_file 'drivers/store/app/models/product.rb',       product_model
+      create_file 'drivers/store/spec/models/product_spec.rb', product_model_spec
+      create_file 'drivers/store/spec/factories/product.rb',   product_factory
+      create_file 'spec/factories/funny_product.rb',           funny_product_factory
+    end
+
+    it 'properly loads the factory' do
+      run_command 'rspec drivers/store/spec/models/product_spec.rb -t in_driver'
+    end
+
+    it 'still loads non-driver factories' do
+      run_command 'rspec drivers/store/spec/models/product_spec.rb -t not_in_driver'
     end
   end
 end

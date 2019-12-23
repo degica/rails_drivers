@@ -13,5 +13,8 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
-gem 'pry-byebug', group: %i[development test]
-gem 'rubocop'
+group :development, :test do
+  gem 'factory_bot_rails', require: false
+  gem 'pry-byebug'
+  gem 'rubocop'
+end
