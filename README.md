@@ -141,5 +141,11 @@ sync('drivers/*').forEach((driverPath) => {
 module.exports = environment
 ```
 
+## Developing / Testing
+
+This gem doesn't actually load the dummy app environment like most Rails plugins. For each spec, it copies the entire dummy app into a new folder and runs rake tasks, generators, and `rails run` inside that new folder. This makes it easier for us to test file-structure related behavior. We can freely create and move files without worrying about cleaning up.
+
+Copying the entire dummy app on every spec is super slow. If you have [fuse-overlayfs](https://github.com/containers/fuse-overlayfs) installed, the test cases will use it to avoid the full copy on every test. Set `NO_OVERLAYFS=true` if you have it installed but don't want it to be used. If used, it speeds up tests a little bit, but running `rails run` is still pretty slow.
+
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

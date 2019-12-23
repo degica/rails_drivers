@@ -10,6 +10,9 @@ Style/BlockComments:
 Style/Documentation:
   Enabled: false
 
+Style/AndOr:
+  Enabled: false
+
 Style/RescueModifier:
   Exclude:
     - spec/spec_helper.rb
@@ -17,6 +20,13 @@ Style/RescueModifier:
 Style/NestedParenthesizedCalls:
   Exclude:
     - spec/**/*
+
+Style/MultilineIfModifier:
+  Exclude:
+    - spec/support/dummy_app_helpers.rb
+Style/WhileUntilModifier:
+  Exclude:
+    - spec/support/dummy_app_helpers.rb
 
 Metrics/BlockLength:
   Exclude:

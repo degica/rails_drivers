@@ -65,9 +65,7 @@ module DummyAppHelpers
   def create_file(file_name, contents)
     full_path = File.expand_path(File.join(dummy_app, file_name))
 
-    dir = full_path.split('/')
-    dir.pop
-    FileUtils.mkdir_p(dir.join('/'))
+    FileUtils.mkdir_p(File.dirname(full_path))
 
     File.open(full_path, 'w') { |f| f.write contents }
   end
@@ -84,6 +82,18 @@ module DummyAppHelpers
     @dummy_app
   end
 
+  def dummy_app_workdir
+    "#{@dummy_app}.workdir"
+  end
+
+  def dummy_app_upper
+    "#{@dummy_app}.upper"
+  end
+
+  def all_dummy_app_dirs
+    [dummy_app, dummy_app_workdir, dummy_app_upper]
+  end
+
   def dummy_app_template
     File.expand_path File.join(__dir__, '../dummy')
   end
@@ -91,15 +101,27 @@ module DummyAppHelpers
   def setup_dummy_app
     random_string = SecureRandom.hex.chars.first(4).join
     @dummy_app = File.expand_path File.join(__dir__, "../dummy-#{random_string}")
-    FileUtils.rm_r @dummy_app if File.exist?(@dummy_app)
-    FileUtils.cp_r dummy_app_template, @dummy_app
+
+    all_dummy_app_dirs.each do |dir|
+      FileUtils.rm_rf dir
+      FileUtils.mkdir dir
+    end
+
+    try_overlayfs or copy_dummy_app
   end
 
   def teardown_dummy_app
     return if @dummy_app.nil?
 
-    FileUtils.rm_r @dummy_app
+    until system "fusermount -u #{@dummy_app}"
+      sleep 1
+    end if @using_fuse
+    all_dummy_app_dirs.each do |dir|
+      FileUtils.rm_r dir
+    end
+
     @dummy_app = nil
+    @using_fuse = nil
   end
 
   #
@@ -118,5 +140,20 @@ module DummyAppHelpers
     lines[-1] = '...' if lines.size > limit
 
     lines
+  end
+
+  def try_overlayfs
+    return false if ENV['NO_OVERLAYFS']
+    low  = dummy_app_template
+    up   = dummy_app_upper
+    work = dummy_app_workdir
+
+    cmd = "fuse-overlayfs -o 'lowerdir=#{low},upperdir=#{up},workdir=#{work}' #{dummy_app}"
+    @using_fuse = system cmd
+  end
+
+  def copy_dummy_app
+    FileUtils.rmdir dummy_app
+    FileUtils.cp_r dummy_app_template, dummy_app
   end
 end
