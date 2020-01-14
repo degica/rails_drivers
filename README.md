@@ -34,9 +34,9 @@ Just run `rails g driver my_new_driver_name`.
 The `driver` utility technically works with other generators and rake tasks, but is only guaranteed to work with migrations.
 The reason is that some generators assume a particular path, rather than using the Rails path methods.
 
-### Creating rake tasks for a driver
+### Creating a rake tasks for a driver
 
-Every driver includes a `lib/tasks` directory where you can define rake tasks. Rake tasks defined in drivers are automatically loaded and namespaced under `driver:driver_name:<namespace>:<task_name>`.
+Every driver includes a `lib/tasks` directory where you can define rake tasks. Rake tasks defined in drivers are automatically loaded and namespaced under `driver:<driver_name>:<namespace>:<task_name>`. For example,
 
 ### Testing for coupling
 
