@@ -9,7 +9,7 @@ class DriverGenerator < Rails::Generators::NamedBase
     create_file "drivers/#{file_name}/app/views/#{file_name}/.keep", ''
     create_file "drivers/#{file_name}/spec/.keep", ''
     create_file "drivers/#{file_name}/db/migrate/.keep", ''
-    create_file "drivers/#{file_name}/lib/.keep", ''
+    create_file "drivers/#{file_name}/lib/tasks/.keep", ''
 
     template 'routes.rb.erb',      "drivers/#{file_name}/config/routes.rb"
     template 'initializer.rb.erb', "drivers/#{file_name}/config/initializers/#{file_name}_feature.rb"
