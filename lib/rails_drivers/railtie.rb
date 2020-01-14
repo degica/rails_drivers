@@ -9,7 +9,13 @@ module RailsDrivers
 
       # load drivers rake tasks
       Dir['drivers/*/lib/tasks/**/*.rake'].each do |driver_rake_file|
-        load driver_rake_file
+        %r{^drivers/(?<driver_name>\w+)/} =~ driver_rake_file
+
+        namespace(:driver) do
+          namespace(driver_name) do
+            load driver_rake_file
+          end
+        end
       end
     end
 
