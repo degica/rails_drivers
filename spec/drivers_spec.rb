@@ -203,4 +203,38 @@ RSpec.describe 'A Rails Driver' do
       run_command 'rspec drivers/store/spec/models/product_spec.rb -t not_in_driver'
     end
   end
+
+  context 'with a rake task in a driver' do
+    let(:rake_file) do
+      <<-RUBY
+        namespace :dummy do
+          desc 'A dummy rake task'
+          task :run do
+            # Do absolutely nothing!
+          end
+        end
+      RUBY
+    end
+
+    let(:rake_file_nested) do
+      <<-RUBY
+        namespace :dummy_nested do
+          desc 'A dummy rake task'
+          task :run do
+            # Do absolutely nothing!
+          end
+        end
+      RUBY
+    end
+
+    before do
+      create_file 'drivers/store/lib/tasks/dummy.rake', rake_file
+      create_file 'drivers/store/lib/tasks/nested/dummy.rake', rake_file_nested
+    end
+
+    it 'properly loads the rake tasks' do
+      run_command 'rake dummy:run'
+      run_command 'rake dummy_nested:run'
+    end
+  end
 end
