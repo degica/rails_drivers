@@ -205,20 +205,9 @@ RSpec.describe 'A Rails Driver' do
   end
 
   context 'with a rake task in a driver' do
-    let(:rake_file) do
+    def make_rake_task(namespace)
       <<-RUBY
-        namespace :dummy do
-          desc 'A dummy rake task'
-          task :run do
-            # Do absolutely nothing!
-          end
-        end
-      RUBY
-    end
-
-    let(:rake_file_nested) do
-      <<-RUBY
-        namespace :dummy_nested do
+        namespace :#{namespace} do
           desc 'A dummy rake task'
           task :run do
             # Do absolutely nothing!
@@ -228,8 +217,8 @@ RSpec.describe 'A Rails Driver' do
     end
 
     before do
-      create_file 'drivers/store/lib/tasks/dummy.rake', rake_file
-      create_file 'drivers/store/lib/tasks/nested/dummy.rake', rake_file_nested
+      create_file 'drivers/store/lib/tasks/dummy.rake', make_rake_task(:dummy)
+      create_file 'drivers/store/lib/tasks/nested/dummy.rake', make_rake_task(:dummy_nested)
     end
 
     it 'properly loads the rake tasks' do
