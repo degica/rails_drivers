@@ -222,8 +222,8 @@ RSpec.describe 'A Rails Driver' do
     end
 
     it 'properly loads the rake tasks' do
-      run_command 'rake driver:store:dummy:run'
-      run_command 'rake driver:store:dummy_nested:run'
+      expect { run_command 'rake driver:store:dummy:run' }.to_not raise_error
+      expect { run_command 'rake driver:store:dummy_nested:run' }.to_not raise_error
     end
   end
 end
