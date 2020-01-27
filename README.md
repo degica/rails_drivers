@@ -76,11 +76,13 @@ end
 
 
 # drivers/my_driver/overrides/product_override.rb
-module ProductOverride
-  extend ActiveSupport::Concern
+module MyDriver
+  module ProductOverride
+    extend ActiveSupport::Concern
 
-  def new_method
-    'Please only call me from code inside my_driver'
+    def new_method
+      'Please only call me from code inside my_driver'
+    end
   end
 end
 
