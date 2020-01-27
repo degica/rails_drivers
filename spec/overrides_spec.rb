@@ -91,6 +91,11 @@ RSpec.describe 'Rails Driver Overrides' do
       expect(override_method_output).to eq "it worked!\n"
     end
 
+    it "populates the model's driver_overrides" do
+      overrides = run_ruby %(puts Product.driver_overrides.to_s)
+      expect(overrides).to eq "[ProductOverride]\n"
+    end
+
     it 'persists across reloads' do
       create_file 'tmp/new_product_override.rb', alt_product_override
 

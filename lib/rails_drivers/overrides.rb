@@ -5,6 +5,8 @@ module RailsDrivers
     extend ActiveSupport::Concern
 
     included do
+      cattr_reader :driver_overrides
+
       possible_overrides = Dir.glob(
         Rails.root.join(
           'drivers', '*', 'overrides',
@@ -12,11 +14,13 @@ module RailsDrivers
         )
       )
 
-      possible_overrides.each do |path|
+      @@driver_overrides = possible_overrides.map do |path|
         require_dependency path
 
-        include "#{name}Override".constantize
-      end
+        override = "#{name}Override".constantize
+        include override
+        override
+      end.freeze
     end
   end
 end
