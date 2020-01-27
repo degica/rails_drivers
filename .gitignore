@@ -9,3 +9,7 @@ spec/dummy/node_modules/
 spec/dummy/yarn-error.log
 spec/dummy/storage/
 spec/dummy/tmp/
+vendor/bundle
+spec/dummy/.npm
+spec/dummy/.config
+spec/dummy/.bash_history

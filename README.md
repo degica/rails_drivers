@@ -4,20 +4,32 @@
 
 Each driver is like a mini Rails app that has full access to the main app. A driver has its own `app`, `config`, `spec`, and `db` folder.
 
-Technically speaking, drivers are just a fancy name for putting code into a different folder. The advantage of doing this is that it provides clear-cut separation of concerns. If we follow a couple of simple rules, we can actually test that separation:
+Technically speaking, "driver" is just a fancy name for code that live in a different app folder. The advantage of doing this is that it provides clear-cut separation of concerns. If we follow a couple of simple rules, we can actually test that separation:
 
 - Drivers should not touch other drivers
 - The main app should not touch drivers directly
 
 The "main app" refers to the files inside your `<project root>/app` directory.
 
-If your test suite is good, you can test that these rules are adhered to by selectively adding and removing drivers before running your tests.
+If your test suite is good enough (see [Testing for coupling](#testing-for-coupling), you can test that these rules are adhered to by selectively adding and removing drivers before running your tests.
 
 ## Aren't these just engines?
 
 Very similar, yes. They use the same Rails facilities for adding new `app` paths, etc.
 
-But Drivers have less friction. They can be freely added and removed from your project without breaking anything. There's no need to mess around with gems, vendoring, or dummy apps.
+But practically speaking, drivers come with less friction. They can be freely added and removed from your project without making changes to the main app. There's no need to mess around with gems, routes, or dummy apps.
+
+Another difference is that drivers have a different dependency direction from engines. Engines are depended on by the Rails app:
+```
+         depends on
+(Rails App) --> (Engine)
+```
+A Rails app includes an engine as a plugin. The engine doesn't know how the Rails app works. For drivers, it's the other way around:
+```
+      depends on
+(Driver) --> (Rails App)
+```
+The Rails app doesn't know how its drivers work. It simply acts as a platform for all drivers to be built on. This makes drivers a great way to develop independent features that all rely on the same set of core functionality.
 
 ## Usage
 
@@ -25,14 +37,14 @@ Every folder inside `drivers` has its own `app`, `config`, `db`, and `spec` fold
 
 ### Creating a new driver
 
-Just run `rails g driver my_new_driver_name`.
+Run `rails g driver my_new_driver_name` to get a scaffold driver.
 
 ### Creating migrations for a driver
 
 `bundle exec driver my_driver_name generate migration blah etc_etc:string`
 
 The `driver` utility technically works with other generators and rake tasks, but is only guaranteed to work with migrations.
-The reason is that some generators assume a particular path, rather than using the Rails path methods.
+The reason is that some generators have hard-coded path strongs, rather than using the Rails path methods.
 
 ### Creating a rake task in a driver
 
@@ -74,11 +86,16 @@ rake driver:restore
 bundle exec driver admin do rspec --pattern '{spec,drivers/*/spec}/**{,/*/**}/*_spec.rb'
 # (can run with no drivers as well)
 bundle exec nodriver do rspec --pattern '{spec,drivers/*/spec}/**{,/*/**}/*_spec.rb'
+
+# Or you can move the driver folders around manually
+mv drivers/admin tmp/drivers/admin
+bundle exec rspec --pattern '{spec,drivers/*/spec}/**{,/*/**}/*_spec.rb'
+mv tmp/drivers/admin drivers/admin
 ```
 
 This lets you to ensure that the store and admin function properly without each other. Note we're running all of the main app's specs twice. This is good because we also want to make sure the main app is not reaching into drivers.
 
-Of course there's nothing stopping you from using if-statements to detect whether a driver is present. It's up to you to determine what's a "safe" level of crossover. Generally, if you find yourself using a lot of those if-statements, you should consider rethinking which functionality belongs in a driver and which functionality belongs in your main app.
+Of course there's nothing stopping you from using if-statements to detect whether a driver is present. It's up to you to determine what's a "safe" level of crossover. Generally, if you find yourself using a lot of those if-statements, you should consider rethinking which functionality belongs in a driver and which functionality belongs in your main app. On the other hand, the if-statements provide clear feature boundaries and can function as feature flags. Turning off a feature is as simple as removing a folder from `drivers`.
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -92,7 +109,7 @@ And then execute:
 $ bundle install
 ```
 
-Add this line to your routes.rb:
+Finally, add these lines to your routes.rb:
 
 ```ruby
 require 'rails_drivers/routes'
