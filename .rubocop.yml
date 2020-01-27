@@ -18,6 +18,11 @@ Style/NestedParenthesizedCalls:
   Exclude:
     - spec/**/*
 
+Style/ClassVars:
+  Exclude:
+    # rubocop doesn't seem to know what's going on here.
+    - lib/rails_drivers/overrides.rb
+
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
