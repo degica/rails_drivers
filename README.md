@@ -61,6 +61,36 @@ end
 
 Can be executed using `rake driver:my_driver:my_namespace:task_name`.
 
+### Overrides
+
+Sometimes you want to add a method to a core class, but that method will only be used by one driver. This can be achieved by adding files to your driver's `overrides` directory.
+
+```ruby
+# app/models/product.rb
+# (doesn't have to be a model - can be anything)
+class Product < ApplicationRecord
+  # When you include this, every driver's product_override.rb is loaded and
+  # included. Works correctly with autoloading during development.
+  include RailsDrivers::Overrides
+end
+
+
+# drivers/my_driver/overrides/product_override.rb
+module ProductOverride
+  extend ActiveSupport::Concern
+
+  def new_method
+    'Please only call me from code inside my_driver'
+  end
+end
+
+
+# Anywhere in my_driver (or elsewhere, but that's bad style)
+Product.new.new_method
+```
+
+For each Override, the accompanying class simply `includes` it, so any methods you define will be available throughout the whole app. To make sure your drivers don't change the core behavior of the app, see [Testing for coupling](#testing-for-coupling).
+
 ### Testing for coupling
 
 Since drivers are merged into your main application just like engines, there's nothing stopping them from accessing other drivers, and there's nothing stopping your main application from accessing drivers. In order to ensure those things don't happen, we have a handful of rake tasks:
