@@ -20,19 +20,23 @@ module DummyAppHelpers
   # Running commands
   #
 
-  def run_command(cmd, input: nil)
-    raise 'No dummy app' if dummy_app.nil?
-
-    stdin, stdout, stderr, wait = Open3.popen3('sh', '-c', "bundle exec #{cmd}", chdir: dummy_app)
-    stdin.write input if input
-    stdin.close
-
+  def wait_for_command(stdout, stderr, process)
     error = truncate_lines(stderr)
     std = truncate_lines(stdout)
-    code = wait.value
+    code = process.value
     raise "Exited with code #{code}: #{cmd}\n#{error.join}\n#{std.join}" if code != 0
 
     std.join
+  end
+
+  def run_command(cmd, input: nil)
+    raise 'No dummy app' if dummy_app.nil?
+
+    stdin, stdout, stderr, process = Open3.popen3('sh', '-c', "bundle exec #{cmd}", chdir: dummy_app)
+    stdin.write input if input
+    stdin.close
+
+    wait_for_command(stdout, stderr, process)
   ensure
     stdout&.close
     stderr&.close
