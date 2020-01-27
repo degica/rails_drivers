@@ -20,19 +20,22 @@ module DummyAppHelpers
   # Running commands
   #
 
-  def run_command(cmd)
+  def run_command(cmd, input: nil)
     raise 'No dummy app' if dummy_app.nil?
 
-    stdin, stdout, wait = Open3.popen2e('sh', '-c', "bundle exec #{cmd}", chdir: dummy_app)
+    stdin, stdout, stderr, wait = Open3.popen3('sh', '-c', "bundle exec #{cmd}", chdir: dummy_app)
+    stdin.write input if input
     stdin.close
 
-    lines = truncate_lines(stdout)
+    error = truncate_lines(stderr)
+    std = truncate_lines(stdout)
     code = wait.value
-    raise "Exited with code #{code}: #{cmd}\n#{lines.join}" if code != 0
+    raise "Exited with code #{code}: #{cmd}\n#{error.join}\n#{std.join}" if code != 0
 
-    lines.join
+    std.join
   ensure
     stdout&.close
+    stderr&.close
   end
 
   def run_ruby(code)
