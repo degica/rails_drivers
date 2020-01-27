@@ -17,11 +17,13 @@ RSpec.describe 'Rails Driver Overrides' do
 
   let(:product_override) do
     <<-RUBY
-      module ProductOverride
-        extend ActiveSupport::Concern
+      module Store
+        module ProductOverride
+          extend ActiveSupport::Concern
 
-        def override_method
-          'it worked!'
+          def override_method
+            'it worked!'
+          end
         end
       end
     RUBY
@@ -29,11 +31,41 @@ RSpec.describe 'Rails Driver Overrides' do
 
   let(:alt_product_override) do
     <<-RUBY
-      module ProductOverride
-        extend ActiveSupport::Concern
+      module Store
+        module ProductOverride
+          extend ActiveSupport::Concern
 
-        def override_method
-          'it worked! (v2)'
+          def override_method
+            'it worked! (v2)'
+          end
+        end
+      end
+    RUBY
+  end
+
+  let(:name_clash_product_override) do
+    <<-RUBY
+      module Store
+        module ProductOverride
+          extend ActiveSupport::Concern
+
+          def say_hello
+            'whoa this should not happen'
+          end
+        end
+      end
+    RUBY
+  end
+
+  let(:other_driver_product_override) do
+    <<-RUBY
+      module Admin
+        module ProductOverride
+          extend ActiveSupport::Concern
+
+          def admin_method
+            'admin method result'
+          end
         end
       end
     RUBY
@@ -93,7 +125,7 @@ RSpec.describe 'Rails Driver Overrides' do
 
     it "populates the model's driver_overrides" do
       overrides = run_ruby %(puts Product.driver_overrides.to_s)
-      expect(overrides).to eq "[ProductOverride]\n"
+      expect(overrides).to eq "[Store::ProductOverride]\n"
     end
 
     it 'persists across reloads' do
@@ -113,6 +145,34 @@ RSpec.describe 'Rails Driver Overrides' do
 
       expect(before).to eq 'it worked!'
       expect(after).to eq 'it worked! (v2)'
+    end
+  end
+
+  context 'with multiple overrides present' do
+    before do
+      create_file 'drivers/store/overrides/product_override.rb', product_override
+      create_file 'drivers/admin/overrides/product_override.rb', other_driver_product_override
+    end
+
+    it 'includes both of them' do
+      override_method_output = run_ruby %(puts Product.new.override_method)
+      expect(override_method_output).to eq "it worked!\n"
+
+      override_method_output = run_ruby %(puts Product.new.admin_method)
+      expect(override_method_output).to eq "admin method result\n"
+    end
+  end
+
+  context 'when an override shadows a method in the overridden class' do
+    before do
+      create_file 'drivers/store/overrides/product_override.rb', name_clash_product_override
+    end
+
+    it 'issues a warning' do
+      output = run_command 'rails c', input: 'Product', capture_stderr: true
+
+      expect(output).to include 'Driver override method Store::ProductOverride#say_hello '\
+        'is shadowed by Product#say_hello and will likely not do anything.'
     end
   end
 end
