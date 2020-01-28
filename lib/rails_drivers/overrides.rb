@@ -25,12 +25,12 @@ module RailsDrivers
         override
       end.freeze
 
-      singleton_class.prepend MethodAddedHook
+      singleton_class.prepend CheckForShadowedMethods
     end
 
     # This module is prepended to the singleton class of the including class
     # to detect when an override is attempting to re-define any methods.
-    module MethodAddedHook
+    module CheckForShadowedMethods
       def method_added(method_name)
         driver_overrides.each do |override|
           next unless override.instance_methods.include?(method_name)
