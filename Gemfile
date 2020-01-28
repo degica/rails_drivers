@@ -15,7 +15,7 @@ gemspec
 
 group :development, :test do
   gem 'factory_bot_rails', require: false
+  gem 'irb'
   gem 'pry-byebug'
   gem 'rubocop'
-  gem 'irb'
 end
