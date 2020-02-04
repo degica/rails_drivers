@@ -3,7 +3,7 @@
 require 'rails_drivers/version'
 require 'rails_drivers/setup'
 require 'rails_drivers/railtie'
-require 'rails_drivers/overrides'
+require 'rails_drivers/extensions'
 
 module RailsDrivers
   class << self
