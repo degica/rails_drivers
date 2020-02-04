@@ -61,23 +61,23 @@ end
 
 Can be executed using `rake driver:my_driver:my_namespace:task_name`.
 
-### Overrides
+### Extensions
 
-Sometimes you want to add a method to a core class, but that method will only be used by one driver. This can be achieved by adding files to your driver's `overrides` directory.
+Sometimes you want to add a method to a core class, but that method will only be used by one driver. This can be achieved by adding files to your driver's `extensions` directory.
 
 ```ruby
 # app/models/product.rb
 # (doesn't have to be a model - can be anything)
 class Product < ApplicationRecord
-  # When you include this, every driver's product_override.rb is loaded and
+  # When you include this, every driver's product_extension.rb is loaded and
   # included. Works correctly with autoloading during development.
-  include RailsDrivers::Overrides
+  include RailsDrivers::Extensions
 end
 
 
-# drivers/my_driver/overrides/product_override.rb
+# drivers/my_driver/extensions/product_extension.rb
 module MyDriver
-  module ProductOverride
+  module ProductExtension
     extend ActiveSupport::Concern
 
     def new_method
@@ -91,7 +91,7 @@ end
 Product.new.new_method
 ```
 
-For each Override, the accompanying class simply `includes` it, so any methods you define will be available throughout the whole app. To make sure your drivers don't change the core behavior of the app, see [Testing for coupling](#testing-for-coupling).
+For each Extension, the accompanying class simply `includes` it, so any methods you define will be available throughout the whole app. To make sure your drivers don't change the core behavior of the app, see [Testing for coupling](#testing-for-coupling).
 
 ### Testing for coupling
 
