@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Rails Driver Overrides' do
+RSpec.describe 'Rails Driver Extensions' do
   let(:product_model) do
     <<-RUBY
       class Product
-        include RailsDrivers::Overrides
+        include RailsDrivers::Extensions
 
         def say_hello
           'hello'
@@ -15,13 +15,13 @@ RSpec.describe 'Rails Driver Overrides' do
     RUBY
   end
 
-  let(:product_override) do
+  let(:product_extension) do
     <<-RUBY
       module Store
-        module ProductOverride
+        module ProductExtension
           extend ActiveSupport::Concern
 
-          def override_method
+          def extension_method
             'it worked!'
           end
         end
@@ -29,13 +29,13 @@ RSpec.describe 'Rails Driver Overrides' do
     RUBY
   end
 
-  let(:alt_product_override) do
+  let(:alt_product_extension) do
     <<-RUBY
       module Store
-        module ProductOverride
+        module ProductExtension
           extend ActiveSupport::Concern
 
-          def override_method
+          def extension_method
             'it worked! (v2)'
           end
         end
@@ -43,10 +43,10 @@ RSpec.describe 'Rails Driver Overrides' do
     RUBY
   end
 
-  let(:name_clash_product_override) do
+  let(:name_clash_product_extension) do
     <<-RUBY
       module Store
-        module ProductOverride
+        module ProductExtension
           extend ActiveSupport::Concern
 
           def say_hello
@@ -57,10 +57,10 @@ RSpec.describe 'Rails Driver Overrides' do
     RUBY
   end
 
-  let(:other_driver_product_override) do
+  let(:other_driver_product_extension) do
     <<-RUBY
       module Admin
-        module ProductOverride
+        module ProductExtension
           extend ActiveSupport::Concern
 
           def admin_method
@@ -75,29 +75,29 @@ RSpec.describe 'Rails Driver Overrides' do
     create_file 'app/models/product.rb', product_model
   end
 
-  context 'with no override present' do
+  context 'with no extension present' do
     specify 'the model still functions' do
       say_hello_result = run_ruby %(puts Product.new.say_hello)
       expect(say_hello_result).to eq "hello\n"
 
-      override_method_included = run_ruby %(puts Product.new.respond_to?(:override_method))
-      expect(override_method_included).to eq "false\n"
+      extension_method_included = run_ruby %(puts Product.new.respond_to?(:extension_method))
+      expect(extension_method_included).to eq "false\n"
     end
 
-    specify 'an override can be added mid-session' do
-      create_file 'tmp/product_override.rb', product_override
+    specify 'an extension can be added mid-session' do
+      create_file 'tmp/product_extension.rb', product_extension
 
       script = %(
         # First, confirm the product already exists
-        IO.write 'before.out', Product.new.respond_to?(:override_method)
+        IO.write 'before.out', Product.new.respond_to?(:extension_method)
 
         # Write file mid-session
-        FileUtils.mkdir_p 'drivers/store/overrides'
-        FileUtils.cp 'tmp/product_override.rb', 'drivers/store/overrides'
+        FileUtils.mkdir_p 'drivers/store/extensions'
+        FileUtils.cp 'tmp/product_extension.rb', 'drivers/store/extensions'
 
         # Reload and the plugin should show up
         reload!
-        IO.write 'after.out', Product.new.override_method
+        IO.write 'after.out', Product.new.extension_method
       )
 
       run_command 'rails c', input: script
@@ -110,32 +110,32 @@ RSpec.describe 'Rails Driver Overrides' do
     end
   end
 
-  context 'with an override present' do
+  context 'with an extension present' do
     before do
-      create_file 'drivers/store/overrides/product_override.rb', product_override
+      create_file 'drivers/store/extensions/product_extension.rb', product_extension
     end
 
     it 'is included by the model' do
-      override_method_exists = run_ruby %(puts Product.new.respond_to?(:override_method))
-      expect(override_method_exists).to eq "true\n"
+      extension_method_exists = run_ruby %(puts Product.new.respond_to?(:extension_method))
+      expect(extension_method_exists).to eq "true\n"
 
-      override_method_output = run_ruby %(puts Product.new.override_method)
-      expect(override_method_output).to eq "it worked!\n"
+      extension_method_output = run_ruby %(puts Product.new.extension_method)
+      expect(extension_method_output).to eq "it worked!\n"
     end
 
-    it "populates the model's driver_overrides" do
-      overrides = run_ruby %(puts Product.driver_overrides.to_s)
-      expect(overrides).to eq "[Store::ProductOverride]\n"
+    it "populates the model's driver_extensions" do
+      extensions = run_ruby %(puts Product.driver_extensions.to_s)
+      expect(extensions).to eq "[Store::ProductExtension]\n"
     end
 
     it 'persists across reloads' do
-      create_file 'tmp/new_product_override.rb', alt_product_override
+      create_file 'tmp/new_product_extension.rb', alt_product_extension
 
       script = %(
-        IO.write 'before.out', Product.new.override_method
-        FileUtils.cp 'tmp/new_product_override.rb', 'drivers/store/overrides/product_override.rb'
+        IO.write 'before.out', Product.new.extension_method
+        FileUtils.cp 'tmp/new_product_extension.rb', 'drivers/store/extensions/product_extension.rb'
         reload!
-        IO.write 'after.out', Product.new.override_method
+        IO.write 'after.out', Product.new.extension_method
       )
 
       run_command 'rails c', input: script
@@ -148,30 +148,30 @@ RSpec.describe 'Rails Driver Overrides' do
     end
   end
 
-  context 'with multiple overrides present' do
+  context 'with multiple extensions present' do
     before do
-      create_file 'drivers/store/overrides/product_override.rb', product_override
-      create_file 'drivers/admin/overrides/product_override.rb', other_driver_product_override
+      create_file 'drivers/store/extensions/product_extension.rb', product_extension
+      create_file 'drivers/admin/extensions/product_extension.rb', other_driver_product_extension
     end
 
     it 'includes both of them' do
-      override_method_output = run_ruby %(puts Product.new.override_method)
-      expect(override_method_output).to eq "it worked!\n"
+      extension_method_output = run_ruby %(puts Product.new.extension_method)
+      expect(extension_method_output).to eq "it worked!\n"
 
-      override_method_output = run_ruby %(puts Product.new.admin_method)
-      expect(override_method_output).to eq "admin method result\n"
+      extension_method_output = run_ruby %(puts Product.new.admin_method)
+      expect(extension_method_output).to eq "admin method result\n"
     end
   end
 
-  context 'when an override shadows a method in the overridden class' do
+  context 'when an extension shadows a method in the overridden class' do
     before do
-      create_file 'drivers/store/overrides/product_override.rb', name_clash_product_override
+      create_file 'drivers/store/extensions/product_extension.rb', name_clash_product_extension
     end
 
     it 'issues a warning' do
       output = run_command 'rails c', input: 'Product', capture_stderr: true
 
-      expect(output).to include 'Driver override method Store::ProductOverride#say_hello '\
+      expect(output).to include 'Driver extension method Store::ProductExtension#say_hello '\
         'is shadowed by Product#say_hello and will likely not do anything.'
     end
   end

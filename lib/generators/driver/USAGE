@@ -11,6 +11,6 @@ Example:
         drivers/new_feature/app/models/new_feature
         drivers/new_feature/app/views/new_feature
         drivers/new_feature/config
-        drivers/new_feature/overrides
+        drivers/new_feature/extensions
         drivers/new_feature/spec
         drivers/new_feature/lib

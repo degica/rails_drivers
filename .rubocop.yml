@@ -21,7 +21,7 @@ Style/NestedParenthesizedCalls:
 Style/ClassVars:
   Exclude:
     # rubocop doesn't seem to know what's going on here.
-    - lib/rails_drivers/overrides.rb
+    - lib/rails_drivers/extensions.rb
 
 Metrics/BlockLength:
   Exclude:
