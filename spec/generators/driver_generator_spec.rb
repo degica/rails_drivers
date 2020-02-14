@@ -18,6 +18,7 @@ RSpec.describe 'rails g driver' do
     expect(dummy_app).to have_file 'drivers/driver_name/config/routes.rb'
     expect(dummy_app).to have_file 'drivers/driver_name/config/initializers/driver_name_feature.rb'
     expect(dummy_app).to have_file 'drivers/driver_name/lib/tasks/.keep'
+    expect(dummy_app).to have_file 'drivers/driver_name/README.md'
   end
 
   context 'the namespace' do
