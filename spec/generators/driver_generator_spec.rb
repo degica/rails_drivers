@@ -7,18 +7,41 @@ RSpec.describe 'rails g driver' do
     run_command 'rails g driver driver_name'
   end
 
-  it 'creates the necessary files' do
-    expect(dummy_app).to have_file 'drivers/driver_name/app/'
-    expect(dummy_app).to have_file 'drivers/driver_name/app/models/driver_name/'
-    expect(dummy_app).to have_file 'drivers/driver_name/app/models/driver_name.rb'
-    expect(dummy_app).to have_file 'drivers/driver_name/app/controllers/'
-    expect(dummy_app).to have_file 'drivers/driver_name/app/controllers/driver_name/'
-    expect(dummy_app).to have_file 'drivers/driver_name/app/views/'
-    expect(dummy_app).to have_file 'drivers/driver_name/app/views/driver_name/'
-    expect(dummy_app).to have_file 'drivers/driver_name/config/routes.rb'
-    expect(dummy_app).to have_file 'drivers/driver_name/config/initializers/driver_name_feature.rb'
-    expect(dummy_app).to have_file 'drivers/driver_name/lib/tasks/.keep'
-    expect(dummy_app).to have_file 'drivers/driver_name/README.md'
+  context 'creating files' do
+    it 'creates the app directory' do
+      expect(dummy_app).to have_file 'drivers/driver_name/app/'
+    end
+
+    it 'creates the models directory' do
+      expect(dummy_app).to have_file 'drivers/driver_name/app/models/driver_name/'
+      expect(dummy_app).to have_file 'drivers/driver_name/app/models/driver_name.rb'
+    end
+
+    it 'creates the controllers directory' do
+      expect(dummy_app).to have_file 'drivers/driver_name/app/controllers/'
+      expect(dummy_app).to have_file 'drivers/driver_name/app/controllers/driver_name/'
+    end
+
+    it 'creates the views directory' do
+      expect(dummy_app).to have_file 'drivers/driver_name/app/views/'
+      expect(dummy_app).to have_file 'drivers/driver_name/app/views/driver_name/'
+    end
+
+    it 'creates the routes' do
+      expect(dummy_app).to have_file 'drivers/driver_name/config/routes.rb'
+    end
+
+    it 'creates the driver initializer' do
+      expect(dummy_app).to have_file 'drivers/driver_name/config/initializers/driver_name_feature.rb'
+    end
+
+    it 'creates the tasks directory' do
+      expect(dummy_app).to have_file 'drivers/driver_name/lib/tasks/.keep'
+    end
+
+    it 'creates the readme' do
+      expect(dummy_app).to have_file 'drivers/driver_name/README.md'
+    end
   end
 
   context 'the namespace' do
