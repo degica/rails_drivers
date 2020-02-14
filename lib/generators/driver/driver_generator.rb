@@ -12,6 +12,10 @@ class DriverGenerator < Rails::Generators::NamedBase
     create_file "drivers/#{file_name}/lib/tasks/.keep", ''
     create_file "drivers/#{file_name}/extensions/.keep", ''
 
+    create_templated_files
+  end
+
+  def create_templated_files
     template 'routes.rb.erb',      "drivers/#{file_name}/config/routes.rb"
     template 'initializer.rb.erb', "drivers/#{file_name}/config/initializers/#{file_name}_feature.rb"
     template 'module.rb.erb',      "drivers/#{file_name}/app/models/#{file_name}.rb"
