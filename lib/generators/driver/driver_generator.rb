@@ -19,6 +19,6 @@ class DriverGenerator < Rails::Generators::NamedBase
     template 'routes.rb.erb',      "drivers/#{file_name}/config/routes.rb"
     template 'initializer.rb.erb', "drivers/#{file_name}/config/initializers/#{file_name}_feature.rb"
     template 'module.rb.erb',      "drivers/#{file_name}/app/models/#{file_name}.rb"
-    template 'README.md', "drivers/#{file_name}/README.md"
+    template 'README.md.erb',      "drivers/#{file_name}/README.md"
   end
 end
