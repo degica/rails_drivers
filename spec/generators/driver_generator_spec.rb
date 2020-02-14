@@ -61,4 +61,10 @@ RSpec.describe 'rails g driver' do
       expect(read_file('drivers/driver_name/config/routes.rb')).to include "Dummy::Application.routes.draw do\n"
     end
   end
+
+  context 'the readme' do
+    it 'includes the driver name' do
+      expect(read_file('drivers/driver_name/README.md')).to include 'DriverName'
+    end
+  end
 end
