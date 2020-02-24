@@ -63,7 +63,7 @@ module DummyAppHelpers
   end
 
   def find_js_pack(html, pack_name)
-    match = %r{<script .+(?<script_file>packs/#{pack_name}-.+\.js).+</script>}.match(html)
+    match = %r{<script .+(?<script_file>packs/js/#{pack_name}-.+\.js).+</script>}.match(html)
     expect(match).to_not be_nil, -> { "Couldn't find a script tag for #{pack_name}-*.js in HTML:\n\n#{html}" }
     match[:script_file]
   end
@@ -95,7 +95,7 @@ module DummyAppHelpers
   end
 
   def dummy_app_template
-    File.expand_path File.join(__dir__, '../dummy')
+    File.expand_path File.join(__dir__, "../dummy_#{ENV['RAILS_VERSION']}")
   end
 
   def setup_dummy_app
