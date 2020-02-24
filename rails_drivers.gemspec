@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.executables << 'driver'
   spec.executables << 'nodriver'
 
-  spec.add_dependency 'rails', '~> 5.2'
+  spec.add_dependency 'rails', '~> 6.0'
 
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rspec-rails'
