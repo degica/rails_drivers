@@ -18,4 +18,6 @@ group :development, :test do
   gem 'irb'
   gem 'pry-byebug'
   gem 'rubocop'
+  gem 'bootsnap'
+  gem 'listen'
 end

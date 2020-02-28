@@ -17,7 +17,8 @@ module RailsDrivers
       )
 
       @@driver_extensions = possible_extensions.map do |path|
-        require_dependency path
+        load path
+
         %r{drivers/(?<driver_name>[^/]+)/extensions} =~ path
 
         extension = "#{driver_name.classify}::#{name}Extension".constantize

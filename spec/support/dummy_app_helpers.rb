@@ -21,8 +21,8 @@ module DummyAppHelpers
   #
 
   def wait_for_command(cmd, stdout, stderr, process, capture_stderr = false)
-    error = truncate_lines(stderr)
     std = truncate_lines(stdout)
+    error = truncate_lines(stderr)
     code = process.value
     raise "Exited with code #{code}: #{cmd}\n#{error.join}\n#{std.join}" if code != 0
 
@@ -63,7 +63,7 @@ module DummyAppHelpers
   end
 
   def find_js_pack(html, pack_name)
-    match = %r{<script .+(?<script_file>packs/js/#{pack_name}-.+\.js).+</script>}.match(html)
+    match = %r{<script .+(?<script_file>packs(/js)?/#{pack_name}-.+\.js).+</script>}.match(html)
     expect(match).to_not be_nil, -> { "Couldn't find a script tag for #{pack_name}-*.js in HTML:\n\n#{html}" }
     match[:script_file]
   end
