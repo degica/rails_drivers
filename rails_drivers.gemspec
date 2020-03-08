@@ -22,12 +22,12 @@ Gem::Specification.new do |spec|
   spec.executables << 'nodriver'
 
   rails = case ENV['RAILS_VERSION']
-          when "5.2"
-            "~> 5.2"
-          when "6.0"
-            "~> 6.0"
+          when '5.2'
+            '~> 5.2'
+          when '6.0'
+            '~> 6.0'
           else
-            ">= 5.2"
+            '>= 5.2'
           end
 
   spec.add_dependency 'rails', rails

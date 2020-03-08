@@ -14,10 +14,10 @@ gemspec
 # your gem to rubygems.org.
 
 group :development, :test do
+  gem 'bootsnap'
   gem 'factory_bot_rails', require: false
   gem 'irb'
+  gem 'listen'
   gem 'pry-byebug'
   gem 'rubocop'
-  gem 'bootsnap'
-  gem 'listen'
 end
