@@ -24,9 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        env:
-          - { RAILS_VERSION: 5.2 }
-          - { RAILS_VERSION: 6.0 }
+        rails: ['5.2', '6.0']
     steps:
       - uses: actions/checkout@v1
       - name: Set up Ruby 2.5
@@ -37,11 +35,12 @@ jobs:
         run: sudo apt-get install -y libsqlite3-dev
       - name: Install nodejs dependencies
         run: |
-          echo "spec/dummy_$RAILS_VERSION" | cd
+          cd spec/dummy_${{ matrix.rails }}
           npm install
       - name: Build
         run: |
+          export RAILS_VERSION=${{ matrix.rails }}
           gem install bundler
           bundle install --jobs 4 --retry 3
       - name: RSpec
-        run: bundle exec rspec
+        run: RAILS_VERSION=${{ matrix.rails }} bundle exec rspec
