@@ -17,7 +17,7 @@ module RailsDrivers
       )
 
       @@driver_extensions = possible_extensions.map do |path|
-        load path
+        require_dependency path
 
         %r{drivers/(?<driver_name>[^/]+)/extensions} =~ path
 

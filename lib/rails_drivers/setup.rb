@@ -38,7 +38,7 @@ module RailsDrivers
         rails_config.paths[path] = "drivers/#{driver_name}/#{path}"
         rails_config.autoload_paths += [
           "#{rails_config.root}/drivers/#{driver_name}/lib",
-          "#{rails_config.root}/drivers/#{driver_name}/extensions"
+          "#{rails_config.root}/drivers"
         ]
       end
     end
@@ -52,7 +52,7 @@ module RailsDrivers
         # We want to autoload driver/*/lib folders
         rails_config.autoload_paths += [
           "#{rails_config.root}/#{driver}/lib",
-          "#{rails_config.root}/#{driver}/extensions"
+          "#{rails_config.root}/drivers"
         ]
       end
     end
