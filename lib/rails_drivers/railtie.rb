@@ -20,15 +20,17 @@ module RailsDrivers
     end
 
     # Since the extensions directory exists for organizational
-    # purposes and does not define modules with namespace `Extention` 
+    # purposes and does not define modules with namespace `Extention`
     # we need to use Zeitwerk collapse function.
     #
     # see https://github.com/fxn/zeitwerk#collapsing-directories
-    initializer "rails_drivers.autoloader.collapse" do
-      Rails.autoloaders.each do |loader|
-        loader.collapse("drivers/*/extensions")
+    if Rails::VERSION::MAJOR >= 6
+      initializer 'rails_drivers.autoloader.collapse' do
+        Rails.autoloaders.each do |loader|
+          loader.collapse('drivers/*/extensions')
+        end
       end
-    end if Rails::VERSION::MAJOR >= 6
+    end
 
     config.before_configuration { setup_paths }
     config.after_initialize { RailsDrivers.freeze! }
