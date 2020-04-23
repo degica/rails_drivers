@@ -132,6 +132,8 @@ Of course there's nothing stopping you from using if-statements to detect whethe
 ## Installation
 Add this line to your application's Gemfile:
 
+### Install the gem
+
 ```ruby
 gem 'rails_drivers'
 ```
@@ -141,14 +143,20 @@ And then execute:
 $ bundle install
 ```
 
-Finally, add these lines to your routes.rb:
+### Update routes file
+
+Add these lines to your routes.rb:
 
 ```ruby
+# config/routes.rb in your main Rails app
+
 require 'rails_drivers/routes'
 
 # This can go before or after your application's route definitions
 RailsDrivers::Routes.load_driver_routes
 ```
+
+This will tell your main Rails app to load the `routes.rb` files generated in each of your drivers.
 
 ### RSpec
 
