@@ -44,7 +44,7 @@ Run `rails g driver my_new_driver_name` to get a scaffold driver.
 `bundle exec driver my_driver_name generate migration blah etc_etc:string`
 
 The `driver` utility technically works with other generators and rake tasks, but is only guaranteed to work with migrations.
-The reason is that some generators have hard-coded path strongs, rather than using the Rails path methods.
+The reason is that some generators have hard-coded path strings, rather than using the Rails path methods.
 
 ### Creating a rake task in a driver
 
