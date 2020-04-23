@@ -11,7 +11,7 @@ Technically speaking, "driver" is just a fancy name for code that live in a diff
 
 The "main app" refers to the files inside your `<project root>/app` directory.
 
-If your test suite is good enough (see [Testing for coupling](#testing-for-coupling), you can test that these rules are adhered to by selectively adding and removing drivers before running your tests.
+If your test suite is good enough (see [Testing for coupling](#testing-for-coupling)), you can test that these rules are adhered to by selectively adding and removing drivers before running your tests.
 
 ## Aren't these just engines?
 
