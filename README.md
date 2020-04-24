@@ -158,17 +158,6 @@ RailsDrivers::Routes.load_driver_routes
 
 This will tell your main Rails app to load the `routes.rb` files generated in each of your drivers.
 
-### application.rb
-
-You will also need to include `rails_drivers` in your main Rails application's `application.rb`:
-
-```ruby
-# config/application.rb in your main Rails app
-require 'rails_drivers'
-```
-
-This will have Rails actually load your drivers.
-
 ### RSpec
 
 If you use RSpec with FactoryBot, add these lines to your `spec/rails_helper.rb` or `spec/spec_helper.rb`:
