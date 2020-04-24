@@ -11,7 +11,7 @@ Technically speaking, "driver" is just a fancy name for code that live in a diff
 
 The "main app" refers to the files inside your `<project root>/app` directory.
 
-If your test suite is good enough (see [Testing for coupling](#testing-for-coupling), you can test that these rules are adhered to by selectively adding and removing drivers before running your tests.
+If your test suite is good enough (see [Testing for coupling](#testing-for-coupling)), you can test that these rules are adhered to by selectively adding and removing drivers before running your tests.
 
 ## Aren't these just engines?
 
@@ -44,7 +44,7 @@ Run `rails g driver my_new_driver_name` to get a scaffold driver.
 `bundle exec driver my_driver_name generate migration blah etc_etc:string`
 
 The `driver` utility technically works with other generators and rake tasks, but is only guaranteed to work with migrations.
-The reason is that some generators have hard-coded path strongs, rather than using the Rails path methods.
+The reason is that some generators have hard-coded path strings, rather than using the Rails path methods.
 
 ### Creating a rake task in a driver
 
@@ -132,6 +132,8 @@ Of course there's nothing stopping you from using if-statements to detect whethe
 ## Installation
 Add this line to your application's Gemfile:
 
+### Install the gem
+
 ```ruby
 gem 'rails_drivers'
 ```
@@ -141,14 +143,20 @@ And then execute:
 $ bundle install
 ```
 
-Finally, add these lines to your routes.rb:
+### Update routes file
+
+Add these lines to your routes.rb:
 
 ```ruby
+# config/routes.rb in your main Rails app
+
 require 'rails_drivers/routes'
 
 # This can go before or after your application's route definitions
 RailsDrivers::Routes.load_driver_routes
 ```
+
+This will tell your main Rails app to load the `routes.rb` files generated in each of your drivers.
 
 ### RSpec
 
