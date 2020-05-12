@@ -43,6 +43,16 @@ RSpec.describe 'Rails Driver Extensions' do
     RUBY
   end
 
+  let(:empty_product_extension) do
+    <<-RUBY
+      module Store
+        module ProductExtension
+          extend ActiveSupport::Concern
+        end
+      end
+    RUBY
+  end
+
   let(:name_clash_product_extension) do
     <<-RUBY
       module Store
@@ -145,6 +155,30 @@ RSpec.describe 'Rails Driver Extensions' do
 
       expect(before).to eq 'it worked!'
       expect(after).to eq 'it worked! (v2)'
+    end
+
+    it 'does not include removed methods across reloads' do
+      create_file 'tmp/new_product_extension.rb', empty_product_extension
+
+      script = %(
+        IO.write 'before.out', Product.new.extension_method
+        FileUtils.cp 'tmp/new_product_extension.rb', 'drivers/store/extensions/product_extension.rb'
+        reload!
+        begin
+          Product.new.extension_method # This method should no longer be present!
+          IO.write 'after.out', 'it did not work'
+        rescue NoMethodError
+          IO.write 'after.out', 'it worked'
+        end
+      )
+
+      run_command 'rails c', input: script
+
+      before = read_file('before.out')
+      after = read_file('after.out')
+
+      expect(before).to eq 'it worked!'
+      expect(after).to eq 'it worked'
     end
   end
 

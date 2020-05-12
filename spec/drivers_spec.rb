@@ -125,7 +125,7 @@ RSpec.describe 'A Rails Driver' do
 
     it 'renders webpacker packs in drivers' do
       create_file 'drivers/store/app/views/products/new.html.erb', products_new_view
-      create_file 'drivers/store/app/frontend/packs/products.js', products_pack
+      create_file 'drivers/store/app/javascript/packs/products.js', products_pack
       run_command 'bin/webpack'
 
       script_file = find_js_pack http(:get, '/products/new'), 'products'

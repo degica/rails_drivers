@@ -1,6 +1,6 @@
 AllCops:
   Exclude:
-    - spec/dummy/bin/*
+    - spec/dummy_*/**/*
     - spec/dummy-*/**/*
   TargetRubyVersion: 2.5
 

@@ -21,10 +21,19 @@ Gem::Specification.new do |spec|
   spec.executables << 'driver'
   spec.executables << 'nodriver'
 
-  spec.add_dependency 'rails', '~> 5.2'
+  rails = case ENV['RAILS_VERSION']
+          when '5.2'
+            '~> 5.2'
+          when '6.0'
+            '~> 6.0'
+          else
+            '>= 5.2'
+          end
+
+  spec.add_dependency 'rails', rails
 
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rspec-rails'
   spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency 'webpacker', '~> 3.5'
+  spec.add_development_dependency 'webpacker'
 end

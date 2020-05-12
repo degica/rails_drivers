@@ -19,7 +19,12 @@
 require 'securerandom'
 require 'pry' rescue LoadError
 
-Dir["#{__dir__}/support/*.rb"].each { |f| require f }
+SUPPORTED_RAILS_VERSION = %w[5.2 6.0].freeze
+unless SUPPORTED_RAILS_VERSION.include?(ENV['RAILS_VERSION'])
+  raise 'You must target a Rails version by setting RAILS_VERSION to 5.2 or 6.0'
+end
+
+Dir["#{__dir__}/support/*.rb"].sort.each { |f| require f }
 
 RSpec.configure do |config|
   config.include DummyAppHelpers
