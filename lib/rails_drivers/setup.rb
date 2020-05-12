@@ -34,16 +34,19 @@ module RailsDrivers
     end
 
     def replace_rails_paths_with_driver(driver_name)
+      rails_config.autoload_paths << "#{rails_config.root}/drivers"
+
       DRIVER_PATHS.each do |path|
         rails_config.paths[path] = "drivers/#{driver_name}/#{path}"
         rails_config.autoload_paths += [
-          "#{rails_config.root}/drivers/#{driver_name}/lib",
-          "#{rails_config.root}/drivers"
+          "#{rails_config.root}/drivers/#{driver_name}/lib"
         ]
       end
     end
 
-    def add_every_driver_to_rails_paths
+    def add_every_driver_to_rails_paths # rubocop:disable Metrics/AbcSize
+      rails_config.autoload_paths << "#{rails_config.root}/drivers"
+
       Dir['drivers/*'].each do |driver|
         DRIVER_PATHS.each do |path|
           rails_config.paths[path] << "#{driver}/#{path}"
@@ -51,8 +54,7 @@ module RailsDrivers
 
         # We want to autoload driver/*/lib folders
         rails_config.autoload_paths += [
-          "#{rails_config.root}/#{driver}/lib",
-          "#{rails_config.root}/drivers"
+          "#{rails_config.root}/#{driver}/lib"
         ]
       end
     end
