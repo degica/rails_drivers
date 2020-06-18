@@ -56,6 +56,10 @@ module RailsDrivers
         rails_config.autoload_paths += [
           "#{rails_config.root}/#{driver}/lib"
         ]
+
+        # Load driver locales
+        locale_path = "#{rails_config.root}/#{driver}/config/locales"
+        config.i18n.load_path += [Dir["#{locale_path}/**/*.{rb,yml}"]] if Dir.exist?(locale_path)
       end
     end
   end

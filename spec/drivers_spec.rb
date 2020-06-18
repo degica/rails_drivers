@@ -226,4 +226,22 @@ RSpec.describe 'A Rails Driver' do
       expect { run_command 'rake driver:store:dummy_nested:run' }.to_not raise_error
     end
   end
+
+  context 'with locales in a driver' do
+    let(:en_locale) do
+      <<-YAML
+      ---
+      en:
+        test_key: 'value from driver!'
+      YAML
+    end
+
+    before do
+      create_file 'drivers/store/config/locales/en.yml', en_locale
+    end
+
+    it 'properly loads the driver locale files' do
+      expect(run_ruby('puts I18n.with_locale(:en) { I18n.t("test_key") }')).to eq "value from driver!\n"
+    end
+  end
 end
