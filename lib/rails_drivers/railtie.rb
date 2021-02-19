@@ -8,8 +8,8 @@ module RailsDrivers
       load File.expand_path("#{__dir__}/../tasks/rails_drivers_tasks.rake")
 
       # load drivers rake tasks
-      Dir['drivers/*/lib/tasks/**/*.rake'].each do |driver_rake_file|
-        %r{^drivers/(?<driver_name>\w+)/} =~ driver_rake_file
+      Dir["#{RailsDrivers.config.drivers_path}/*/lib/tasks/**/*.rake"].each do |driver_rake_file|
+        %r{^#{RailsDrivers.config.drivers_path}/(?<driver_name>\w+)/} =~ driver_rake_file
 
         namespace(:driver) do
           namespace(driver_name) do
@@ -27,7 +27,7 @@ module RailsDrivers
     if Rails::VERSION::MAJOR >= 6
       initializer 'rails_drivers.autoloader.collapse' do
         Rails.autoloaders.each do |loader|
-          loader.collapse('drivers/*/extensions')
+          loader.collapse("#{RailsDrivers.config.drivers_path}/*/extensions")
         end
       end
     end

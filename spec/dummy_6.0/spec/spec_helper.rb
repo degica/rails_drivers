@@ -7,6 +7,6 @@ require 'rspec/rails'
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
-  FactoryBot.definition_file_paths += Dir['drivers/*/spec/factories']
+  FactoryBot.definition_file_paths += Dir["#{RailsDrivers.config.drivers_path}/*/spec/factories"]
   FactoryBot.reload
 end

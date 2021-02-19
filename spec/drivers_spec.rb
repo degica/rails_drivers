@@ -103,17 +103,17 @@ RSpec.describe 'A Rails Driver' do
     end
   end
 
-  it_behaves_like 'an engine', 'app/models',               'app/models/concerns'
-  it_behaves_like 'an engine', 'drivers/store/app/models', 'drivers/store/app/models/concerns'
+  it_behaves_like 'an engine', 'app/models', 'app/models/concerns'
+  it_behaves_like 'an engine', "#{drivers_path}/store/app/models", "#{drivers_path}/store/app/models/concerns"
 
-  it_behaves_like 'an engine', 'app/controllers',               'app/controllers/concerns'
-  it_behaves_like 'an engine', 'drivers/store/app/controllers', 'drivers/store/app/controllers/concerns'
+  it_behaves_like 'an engine', 'app/controllers', 'app/controllers/concerns'
+  it_behaves_like 'an engine', "#{drivers_path}/store/app/controllers", "#{drivers_path}/store/app/controllers/concerns"
 
   context 'with a controller in a driver' do
     before do
-      create_file 'app/models/product.rb',                                product_model
-      create_file 'drivers/store/app/controllers/products_controller.rb', products_controller
-      create_file 'drivers/store/config/routes.rb',                       product_routes
+      create_file 'app/models/product.rb', product_model
+      create_file "#{drivers_path}/store/app/controllers/products_controller.rb", products_controller
+      create_file "#{drivers_path}/store/config/routes.rb",                       product_routes
     end
 
     it 'sets up routes' do
@@ -124,8 +124,8 @@ RSpec.describe 'A Rails Driver' do
     end
 
     it 'renders webpacker packs in drivers' do
-      create_file 'drivers/store/app/views/products/new.html.erb', products_new_view
-      create_file 'drivers/store/app/javascript/packs/products.js', products_pack
+      create_file "#{drivers_path}/store/app/views/products/new.html.erb", products_new_view
+      create_file "#{drivers_path}/store/app/javascript/packs/products.js", products_pack
       run_command 'bin/webpack'
 
       script_file = find_js_pack http(:get, '/products/new'), 'products'
@@ -135,9 +135,9 @@ RSpec.describe 'A Rails Driver' do
 
   context 'with a mailer in a driver' do
     before do
-      create_file 'drivers/something/app/mailers/test_mailer.rb', test_mailer
-      create_file 'drivers/something/app/views/test_mailer/some_message.html.erb', test_mailer_html
-      create_file 'drivers/something/app/views/test_mailer/some_message.text.erb', test_mailer_text
+      create_file "#{drivers_path}/something/app/mailers/test_mailer.rb", test_mailer
+      create_file "#{drivers_path}/something/app/views/test_mailer/some_message.html.erb", test_mailer_html
+      create_file "#{drivers_path}/something/app/views/test_mailer/some_message.text.erb", test_mailer_text
     end
 
     it 'can send mail properly' do
@@ -189,18 +189,18 @@ RSpec.describe 'A Rails Driver' do
     end
 
     before do
-      create_file 'drivers/store/app/models/product.rb',       product_model
-      create_file 'drivers/store/spec/models/product_spec.rb', product_model_spec
-      create_file 'drivers/store/spec/factories/product.rb',   product_factory
-      create_file 'spec/factories/funny_product.rb',           funny_product_factory
+      create_file "#{drivers_path}/store/app/models/product.rb",       product_model
+      create_file "#{drivers_path}/store/spec/models/product_spec.rb", product_model_spec
+      create_file "#{drivers_path}/store/spec/factories/product.rb",   product_factory
+      create_file 'spec/factories/funny_product.rb', funny_product_factory
     end
 
     it 'properly loads the factory' do
-      run_command 'rspec drivers/store/spec/models/product_spec.rb -t in_driver'
+      run_command "rspec #{drivers_path}/store/spec/models/product_spec.rb -t in_driver"
     end
 
     it 'still loads non-driver factories' do
-      run_command 'rspec drivers/store/spec/models/product_spec.rb -t not_in_driver'
+      run_command "rspec #{drivers_path}/store/spec/models/product_spec.rb -t not_in_driver"
     end
   end
 
@@ -217,8 +217,8 @@ RSpec.describe 'A Rails Driver' do
     end
 
     before do
-      create_file 'drivers/store/lib/tasks/dummy.rake', make_rake_task(:dummy)
-      create_file 'drivers/store/lib/tasks/nested/dummy.rake', make_rake_task(:dummy_nested)
+      create_file "#{drivers_path}/store/lib/tasks/dummy.rake", make_rake_task(:dummy)
+      create_file "#{drivers_path}/store/lib/tasks/nested/dummy.rake", make_rake_task(:dummy_nested)
     end
 
     it 'properly loads the rake tasks' do

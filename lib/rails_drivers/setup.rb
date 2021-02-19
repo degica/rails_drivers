@@ -33,21 +33,29 @@ module RailsDrivers
       Rails.application.config
     end
 
+    def drivers_path
+      RailsDrivers.config.drivers_path
+    end
+
+    def add_rails_autoload_path(path)
+      rails_config.autoload_paths << path
+    end
+
     def replace_rails_paths_with_driver(driver_name)
-      rails_config.autoload_paths << "#{rails_config.root}/drivers"
+      add_rails_autoload_path "#{rails_config.root}/#{drivers_path}"
 
       DRIVER_PATHS.each do |path|
-        rails_config.paths[path] = "drivers/#{driver_name}/#{path}"
+        rails_config.paths[path] = "#{drivers_path}/#{driver_name}/#{path}"
         rails_config.autoload_paths += [
-          "#{rails_config.root}/drivers/#{driver_name}/lib"
+          "#{rails_config.root}/#{drivers_path}/#{driver_name}/lib"
         ]
       end
     end
 
     def add_every_driver_to_rails_paths
-      rails_config.autoload_paths << "#{rails_config.root}/drivers"
+      add_rails_autoload_path "#{rails_config.root}/#{drivers_path}"
 
-      Dir['drivers/*'].each do |driver|
+      Dir["#{drivers_path}/*"].each do |driver|
         DRIVER_PATHS.each do |path|
           rails_config.paths[path] << "#{driver}/#{path}"
         end

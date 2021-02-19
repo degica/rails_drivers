@@ -9,38 +9,38 @@ RSpec.describe 'rails g driver' do
 
   context 'creating files' do
     it 'creates the app directory' do
-      expect(dummy_app).to have_file 'drivers/driver_name/app/'
+      expect(dummy_app).to have_driver_file 'driver_name/app/'
     end
 
     it 'creates the models directory' do
-      expect(dummy_app).to have_file 'drivers/driver_name/app/models/driver_name/'
-      expect(dummy_app).to have_file 'drivers/driver_name/app/models/driver_name.rb'
+      expect(dummy_app).to have_driver_file 'driver_name/app/models/driver_name/'
+      expect(dummy_app).to have_driver_file 'driver_name/app/models/driver_name.rb'
     end
 
     it 'creates the controllers directory' do
-      expect(dummy_app).to have_file 'drivers/driver_name/app/controllers/'
-      expect(dummy_app).to have_file 'drivers/driver_name/app/controllers/driver_name/'
+      expect(dummy_app).to have_driver_file 'driver_name/app/controllers/'
+      expect(dummy_app).to have_driver_file 'driver_name/app/controllers/driver_name/'
     end
 
     it 'creates the views directory' do
-      expect(dummy_app).to have_file 'drivers/driver_name/app/views/'
-      expect(dummy_app).to have_file 'drivers/driver_name/app/views/driver_name/'
+      expect(dummy_app).to have_driver_file 'driver_name/app/views/'
+      expect(dummy_app).to have_driver_file 'driver_name/app/views/driver_name/'
     end
 
     it 'creates the routes' do
-      expect(dummy_app).to have_file 'drivers/driver_name/config/routes.rb'
+      expect(dummy_app).to have_driver_file 'driver_name/config/routes.rb'
     end
 
     it 'creates the driver initializer' do
-      expect(dummy_app).to have_file 'drivers/driver_name/config/initializers/driver_name_feature.rb'
+      expect(dummy_app).to have_driver_file 'driver_name/config/initializers/driver_name_feature.rb'
     end
 
     it 'creates the tasks directory' do
-      expect(dummy_app).to have_file 'drivers/driver_name/lib/tasks/.keep'
+      expect(dummy_app).to have_driver_file 'driver_name/lib/tasks/.keep'
     end
 
     it 'creates the readme' do
-      expect(dummy_app).to have_file 'drivers/driver_name/README.md'
+      expect(dummy_app).to have_driver_file 'driver_name/README.md'
     end
   end
 
@@ -58,13 +58,13 @@ RSpec.describe 'rails g driver' do
 
   context 'the routes.rb' do
     it 'draws from the Rails application' do
-      expect(read_file('drivers/driver_name/config/routes.rb')).to include "Dummy::Application.routes.draw do\n"
+      expect(read_file("#{drivers_path}/driver_name/config/routes.rb")).to include "Dummy::Application.routes.draw do\n"
     end
   end
 
   context 'the readme' do
     it 'includes the driver name' do
-      expect(read_file('drivers/driver_name/README.md')).to include 'DriverName'
+      expect(read_file("#{drivers_path}/driver_name/README.md")).to include 'DriverName'
     end
   end
 end

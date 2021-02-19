@@ -28,6 +28,7 @@ Dir["#{__dir__}/support/*.rb"].sort.each { |f| require f }
 
 RSpec.configure do |config|
   config.include DummyAppHelpers
+  config.include DriversPathHelpers
 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

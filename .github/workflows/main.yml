@@ -25,6 +25,7 @@ jobs:
     strategy:
       matrix:
         rails: ['5.2', '6.0']
+        drivers_path: ['drivers', 'components']
     steps:
       - uses: actions/checkout@v1
       - name: Set up Ruby 2.5
@@ -43,4 +44,4 @@ jobs:
           gem install bundler
           bundle install --jobs 4 --retry 3
       - name: RSpec
-        run: RAILS_VERSION=${{ matrix.rails }} bundle exec rspec
+        run: RAILS_VERSION=${{ matrix.rails }} DRIVERS_PATH=${{ matrix.drivers_path }} bundle exec rspec

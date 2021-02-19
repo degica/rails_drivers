@@ -102,8 +102,8 @@ RSpec.describe 'Rails Driver Extensions' do
         IO.write 'before.out', Product.new.respond_to?(:extension_method)
 
         # Write file mid-session
-        FileUtils.mkdir_p 'drivers/store/extensions'
-        FileUtils.cp 'tmp/product_extension.rb', 'drivers/store/extensions'
+        FileUtils.mkdir_p "#{drivers_path}/store/extensions"
+        FileUtils.cp 'tmp/product_extension.rb', "#{drivers_path}/store/extensions"
 
         # Reload and the plugin should show up
         reload!
@@ -122,7 +122,7 @@ RSpec.describe 'Rails Driver Extensions' do
 
   context 'with an extension present' do
     before do
-      create_file 'drivers/store/extensions/product_extension.rb', product_extension
+      create_file "#{drivers_path}/store/extensions/product_extension.rb", product_extension
     end
 
     it 'is included by the model' do
@@ -143,7 +143,7 @@ RSpec.describe 'Rails Driver Extensions' do
 
       script = %(
         IO.write 'before.out', Product.new.extension_method
-        FileUtils.cp 'tmp/new_product_extension.rb', 'drivers/store/extensions/product_extension.rb'
+        FileUtils.cp 'tmp/new_product_extension.rb', "#{drivers_path}/store/extensions/product_extension.rb"
         reload!
         IO.write 'after.out', Product.new.extension_method
       )
@@ -162,7 +162,7 @@ RSpec.describe 'Rails Driver Extensions' do
 
       script = %(
         IO.write 'before.out', Product.new.extension_method
-        FileUtils.cp 'tmp/new_product_extension.rb', 'drivers/store/extensions/product_extension.rb'
+        FileUtils.cp 'tmp/new_product_extension.rb', "#{drivers_path}/store/extensions/product_extension.rb"
         reload!
         begin
           Product.new.extension_method # This method should no longer be present!
@@ -184,8 +184,8 @@ RSpec.describe 'Rails Driver Extensions' do
 
   context 'with multiple extensions present' do
     before do
-      create_file 'drivers/store/extensions/product_extension.rb', product_extension
-      create_file 'drivers/admin/extensions/product_extension.rb', other_driver_product_extension
+      create_file "#{drivers_path}/store/extensions/product_extension.rb", product_extension
+      create_file "#{drivers_path}/admin/extensions/product_extension.rb", other_driver_product_extension
     end
 
     it 'includes both of them' do
@@ -199,7 +199,7 @@ RSpec.describe 'Rails Driver Extensions' do
 
   context 'when an extension shadows a method in the overridden class' do
     before do
-      create_file 'drivers/store/extensions/product_extension.rb', name_clash_product_extension
+      create_file "#{drivers_path}/store/extensions/product_extension.rb", name_clash_product_extension
     end
 
     it 'issues a warning' do

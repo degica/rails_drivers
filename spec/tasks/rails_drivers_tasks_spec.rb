@@ -13,9 +13,9 @@ RSpec.describe 'tasks/rails_drivers_tasks.rake' do
     context 'and a valid driver name is given' do
       it 'removes the other two drivers' do
         run_command 'rake driver:isolate[second]'
-        expect(dummy_app).to_not have_file 'drivers/first'
-        expect(dummy_app).to     have_file 'drivers/second'
-        expect(dummy_app).to_not have_file 'drivers/third'
+        expect(dummy_app).to_not have_driver_file '/first'
+        expect(dummy_app).to     have_driver_file '/second'
+        expect(dummy_app).to_not have_driver_file '/third'
       end
     end
 
@@ -35,9 +35,9 @@ RSpec.describe 'tasks/rails_drivers_tasks.rake' do
   describe 'rake driver:clear' do
     it 'removes all drivers' do
       run_command 'rake driver:clear'
-      expect(dummy_app).to_not have_file 'drivers/first'
-      expect(dummy_app).to_not have_file 'drivers/second'
-      expect(dummy_app).to_not have_file 'drivers/third'
+      expect(dummy_app).to_not have_driver_file '/first'
+      expect(dummy_app).to_not have_driver_file '/second'
+      expect(dummy_app).to_not have_driver_file '/third'
     end
   end
 
@@ -45,9 +45,9 @@ RSpec.describe 'tasks/rails_drivers_tasks.rake' do
     it 'undoes the effects of driver:isolate' do
       run_command 'rake driver:isolate[second]'
       run_command 'rake driver:restore'
-      expect(dummy_app).to have_file 'drivers/first'
-      expect(dummy_app).to have_file 'drivers/second'
-      expect(dummy_app).to have_file 'drivers/third'
+      expect(dummy_app).to have_driver_file '/first'
+      expect(dummy_app).to have_driver_file '/second'
+      expect(dummy_app).to have_driver_file '/third'
     end
   end
 end
