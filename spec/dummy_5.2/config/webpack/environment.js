@@ -23,7 +23,7 @@ const addToEntryObject = (sourcePath) => {
   })
 }
 
-sync('drivers/*').forEach((driverPath) => {
+sync(`${process.env.DRIVERS_PATH || 'drivers'}/*`).forEach((driverPath) => {
   addToEntryObject(join(driverPath, config.source_path));
 })
 //// End driver code ////

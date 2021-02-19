@@ -7,8 +7,8 @@ RSpec.describe 'bin/nodriver' do
     run_command('rails g driver one')
     run_command('rails g driver two')
 
-    expect(run_command 'ls -t drivers').to eq "two\none\n"
-    expect(run_command 'nodriver do ls drivers').to be_empty
-    expect(run_command 'ls -t drivers').to eq "two\none\n"
+    expect(run_command "ls -t #{drivers_path}").to eq "two\none\n"
+    expect(run_command "nodriver do ls #{drivers_path}").to be_empty
+    expect(run_command "ls -t #{drivers_path}").to eq "two\none\n"
   end
 end
