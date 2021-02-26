@@ -44,7 +44,7 @@ module RailsDrivers
       end
     end
 
-    def add_every_driver_to_rails_paths # rubocop:disable Metrics/AbcSize
+    def add_every_driver_to_rails_paths
       rails_config.autoload_paths << "#{rails_config.root}/drivers"
 
       Dir['drivers/*'].each do |driver|
