@@ -117,7 +117,7 @@ RSpec.describe 'A Rails Driver' do
     end
 
     it 'sets up routes' do
-      expect(run_command 'rake routes').to include 'products'
+      expect(run_command 'rails routes').to include 'products'
 
       run_ruby %(Product.create(name: 'success').name)
       expect(http :get, '/products').to include 'success'
