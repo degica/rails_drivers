@@ -20,7 +20,7 @@ module DummyAppHelpers
   # Running commands
   #
 
-  def wait_for_command(cmd, stdout, stderr, process, capture_stderr = false)
+  def wait_for_command(cmd, stdout, stderr, process, capture_stderr: false)
     std = truncate_lines(stdout)
     error = truncate_lines(stderr)
     code = process.value
@@ -39,7 +39,7 @@ module DummyAppHelpers
     stdin.write input if input
     stdin.close
 
-    wait_for_command(cmd, stdout, stderr, process, capture_stderr)
+    wait_for_command(cmd, stdout, stderr, process, capture_stderr: capture_stderr)
   ensure
     stdout&.close
     stderr&.close

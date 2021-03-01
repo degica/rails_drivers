@@ -21,6 +21,8 @@ Gem::Specification.new do |spec|
   spec.executables << 'driver'
   spec.executables << 'nodriver'
 
+  spec.required_ruby_version = '~> 2' # rubocop:disable Gemspec/RequiredRubyVersion
+
   rails = case ENV['RAILS_VERSION']
           when '5.2'
             '~> 5.2'
