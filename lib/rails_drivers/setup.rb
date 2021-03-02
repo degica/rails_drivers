@@ -38,32 +38,40 @@ module RailsDrivers
     end
 
     def add_rails_autoload_path(path)
+      rails_config.autoload_paths += [path]
+    end
+
+    def push_rails_autoload_path(path)
       rails_config.autoload_paths << path
     end
 
+    def push_rails_path(rails_path, path)
+      rails_config.paths[rails_path] << path
+    end
+
+    def set_rails_path(rails_path, path)
+      rails_config.paths[rails_path] = path
+    end
+
     def replace_rails_paths_with_driver(driver_name)
-      add_rails_autoload_path "#{rails_config.root}/#{drivers_path}"
+      push_rails_autoload_path "#{rails_config.root}/#{drivers_path}"
 
       DRIVER_PATHS.each do |path|
-        rails_config.paths[path] = "#{drivers_path}/#{driver_name}/#{path}"
-        rails_config.autoload_paths += [
-          "#{rails_config.root}/#{drivers_path}/#{driver_name}/lib"
-        ]
+        set_rails_path path, "#{drivers_path}/#{driver_name}/#{path}"
+        add_rails_autoload_path "#{rails_config.root}/#{drivers_path}/#{driver_name}/lib"
       end
     end
 
     def add_every_driver_to_rails_paths
-      add_rails_autoload_path "#{rails_config.root}/#{drivers_path}"
+      push_rails_autoload_path "#{rails_config.root}/#{drivers_path}"
 
       Dir["#{drivers_path}/*"].each do |driver|
         DRIVER_PATHS.each do |path|
-          rails_config.paths[path] << "#{driver}/#{path}"
+          push_rails_path path, "#{driver}/#{path}"
         end
 
         # We want to autoload driver/*/lib folders
-        rails_config.autoload_paths += [
-          "#{rails_config.root}/#{driver}/lib"
-        ]
+        add_rails_autoload_path "#{rails_config.root}/#{driver}/lib"
       end
     end
   end
