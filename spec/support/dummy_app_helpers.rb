@@ -102,7 +102,7 @@ module DummyAppHelpers
     random_string = SecureRandom.hex.chars.first(4).join
     @dummy_app = File.expand_path File.join(__dir__, "../dummy-#{random_string}")
     FileUtils.rm_r @dummy_app if File.exist?(@dummy_app)
-    FileUtils.cp_r dummy_app_template, @dummy_app
+    cp_r dummy_app_template, @dummy_app
   end
 
   def teardown_dummy_app
@@ -117,6 +117,10 @@ module DummyAppHelpers
   #
 
   private
+
+  def cp_r(src, dst)
+    system "cp -r --reflink #{src} #{dst}"
+  end
 
   def truncate_lines(stream, limit: 200)
     lines = []

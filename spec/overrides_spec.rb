@@ -133,11 +133,6 @@ RSpec.describe 'Rails Driver Extensions' do
       expect(extension_method_output).to eq "it worked!\n"
     end
 
-    it "populates the model's driver_extensions" do
-      extensions = run_ruby %(puts Product.driver_extensions.to_s)
-      expect(extensions).to eq "[Store::ProductExtension]\n"
-    end
-
     it 'persists across reloads' do
       create_file 'tmp/new_product_extension.rb', alt_product_extension
 
