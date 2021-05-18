@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Set up Ruby 2.5
+      - name: Set up Ruby 3.0
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.5.x
+          ruby-version: '3.0'
       - name: Install sqlite3
         run: sudo apt-get install -y libsqlite3-dev
       - name: Build
@@ -24,23 +24,29 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        rails: ['5.2', '6.0']
+        versions:
+          - rails: '5.2',
+            ruby: '2.7'
+          - rails: '6.0',
+            ruby: '2.7'
+          - rails: '6.0',
+            ruby: '3.0'
     steps:
       - uses: actions/checkout@v1
-      - name: Set up Ruby 2.5
+      - name: Set up Ruby ${{ matrix.versions.ruby }}
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.5.x
+          ruby-version: ${{ matrix.versions.ruby }}
       - name: Install sqlite3
         run: sudo apt-get install -y libsqlite3-dev
       - name: Install nodejs dependencies
         run: |
-          cd spec/dummy_${{ matrix.rails }}
+          cd spec/dummy_${{ matrix.versions.rails }}
           npm install
       - name: Build
         run: |
-          export RAILS_VERSION=${{ matrix.rails }}
+          export RAILS_VERSION=${{ matrix.versions.rails }}
           gem install bundler
           bundle install --jobs 4 --retry 3
       - name: RSpec
-        run: RAILS_VERSION=${{ matrix.rails }} bundle exec rspec
+        run: RAILS_VERSION=${{ matrix.versions.rails }} bundle exec rspec

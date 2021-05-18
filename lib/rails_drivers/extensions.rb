@@ -7,8 +7,6 @@ module RailsDrivers
     # Including this module results in all available extension modules being
     # included.
     included do
-      cattr_reader :driver_extensions
-
       possible_extensions = Dir.glob(
         Rails.root.join(
           'drivers', '*', 'extensions',
@@ -16,7 +14,8 @@ module RailsDrivers
         )
       )
 
-      @@driver_extensions = possible_extensions.map do |path|
+      # Every extension should be a module. Require all extensions.
+      included_extensions = possible_extensions.map do |path|
         require_dependency path
 
         %r{drivers/(?<driver_name>[^/]+)/extensions} =~ path
@@ -26,22 +25,19 @@ module RailsDrivers
         extension
       end.freeze
 
-      singleton_class.prepend CheckForShadowedMethods
-    end
+      # Show a warning when an extension tries to overload a core method.
+      singleton_class.prepend(Module.new do
+        define_method :method_added do |method_name|
+          included_extensions.each do |extension|
+            next unless extension.instance_methods.include?(method_name)
 
-    # This module is prepended to the singleton class of the including class
-    # to detect when an extension is attempting to re-define any methods.
-    module CheckForShadowedMethods
-      def method_added(method_name)
-        driver_extensions.each do |extension|
-          next unless extension.instance_methods.include?(method_name)
+            Rails.logger.warn "Driver extension method #{extension.name}##{method_name} "\
+              "is shadowed by #{name}##{method_name} and will likely not do anything."
+          end
 
-          Rails.logger.warn "Driver extension method #{extension.name}##{method_name} "\
-            "is shadowed by #{name}##{method_name} and will likely not do anything."
+          super(method_name)
         end
-
-        super(method_name)
-      end
+      end)
     end
   end
 end

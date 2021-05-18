@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'fileutils'
+
 module RailsDrivers
   module Files
     class Error < StandardError
