@@ -119,7 +119,7 @@ module DummyAppHelpers
   private
 
   def cp_r(src, dst)
-    system "cp -r --reflink=always #{src} #{dst}"
+    system "cp -r --reflink=auto #{src} #{dst}"
   end
 
   def truncate_lines(stream, limit: 200)
