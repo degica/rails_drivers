@@ -201,7 +201,7 @@ RSpec.describe 'Rails Driver Extensions' do
       output = run_command 'rails c', input: 'Product', capture_stderr: true
 
       expect(output).to include 'Driver extension method Store::ProductExtension#say_hello '\
-        'is shadowed by Product#say_hello and will likely not do anything.'
+                                'is shadowed by Product#say_hello and will likely not do anything.'
     end
   end
 end
