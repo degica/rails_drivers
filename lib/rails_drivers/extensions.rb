@@ -32,7 +32,8 @@ module RailsDrivers
             next unless extension.instance_methods.include?(method_name)
 
             Rails.logger.warn "Driver extension method #{extension.name}##{method_name} "\
-              "is shadowed by #{name}##{method_name} and will likely not do anything."
+                              "is shadowed by #{name}##{method_name} and will likely "\
+                              'not do anything.'
           end
 
           super(method_name)
