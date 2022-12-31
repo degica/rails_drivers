@@ -2,7 +2,7 @@
   "name": "dummy",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "3.6"
+    "@rails/webpacker": "5.4"
   },
   "devDependencies": {
     "webpack-dev-server": "^3.11.2"
