@@ -10,7 +10,7 @@ module RailsDrivers
       possible_extensions = Dir.glob(
         Rails.root.join(
           'drivers', '*', 'extensions',
-          "#{name.underscore}_extension.rb"
+          "#{name.demodulize.underscore}_extension.rb"
         )
       )
 
@@ -20,7 +20,7 @@ module RailsDrivers
 
         %r{drivers/(?<driver_name>[^/]+)/extensions} =~ path
 
-        extension = "#{driver_name.classify}::#{name}Extension".constantize
+        extension = "#{driver_name.classify}::#{name.demodulize}Extension".constantize
         include extension
         extension
       end.freeze
