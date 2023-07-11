@@ -15,6 +15,20 @@ RSpec.describe 'Rails Driver Extensions' do
     RUBY
   end
 
+  let(:name_spaced_product_model) do
+    <<-RUBY
+      module Online
+        class Product
+          include RailsDrivers::Extensions
+
+          def say_hello
+            'hello'
+          end
+        end
+      end
+    RUBY
+  end
+
   let(:product_extension) do
     <<-RUBY
       module Store
@@ -83,6 +97,7 @@ RSpec.describe 'Rails Driver Extensions' do
 
   before do
     create_file 'app/models/product.rb', product_model
+    create_file 'app/models/online/product.rb', name_spaced_product_model
   end
 
   context 'with no extension present' do
@@ -94,12 +109,45 @@ RSpec.describe 'Rails Driver Extensions' do
       expect(extension_method_included).to eq "false\n"
     end
 
+    specify 'name spaced models still functions' do
+      say_hello_result = run_ruby %(puts Online::Product.new.say_hello)
+      expect(say_hello_result).to eq "hello\n"
+
+      extension_method_included = run_ruby %(puts Online::Product.new.respond_to?(:extension_method))
+      expect(extension_method_included).to eq "false\n"
+    end
+
     specify 'an extension can be added mid-session' do
       create_file 'tmp/product_extension.rb', product_extension
 
       script = %(
         # First, confirm the product already exists
         IO.write 'before.out', Product.new.respond_to?(:extension_method)
+
+        # Write file mid-session
+        FileUtils.mkdir_p 'drivers/store/extensions'
+        FileUtils.cp 'tmp/product_extension.rb', 'drivers/store/extensions'
+
+        # Reload and the plugin should show up
+        reload!
+        IO.write 'after.out', Product.new.extension_method
+      )
+
+      run_command 'rails c', input: script
+
+      before = read_file('before.out')
+      after = read_file('after.out')
+
+      expect(before).to eq 'false'
+      expect(after).to eq 'it worked!'
+    end
+
+    specify 'an extension can be added mid-session for named spaced models' do
+      create_file 'tmp/product_extension.rb', product_extension
+
+      script = %(
+        # First, confirm the product already exists
+        IO.write 'before.out', Online::Product.new.respond_to?(:extension_method)
 
         # Write file mid-session
         FileUtils.mkdir_p 'drivers/store/extensions'
@@ -133,6 +181,14 @@ RSpec.describe 'Rails Driver Extensions' do
       expect(extension_method_output).to eq "it worked!\n"
     end
 
+    it 'is included by name spaced models' do
+      extension_method_exists = run_ruby %(puts Online::Product.new.respond_to?(:extension_method))
+      expect(extension_method_exists).to eq "true\n"
+
+      extension_method_output = run_ruby %(puts Online::Product.new.extension_method)
+      expect(extension_method_output).to eq "it worked!\n"
+    end
+
     it 'persists across reloads' do
       create_file 'tmp/new_product_extension.rb', alt_product_extension
 
@@ -141,6 +197,25 @@ RSpec.describe 'Rails Driver Extensions' do
         FileUtils.cp 'tmp/new_product_extension.rb', 'drivers/store/extensions/product_extension.rb'
         reload!
         IO.write 'after.out', Product.new.extension_method
+      )
+
+      run_command 'rails c', input: script
+
+      before = read_file('before.out')
+      after = read_file('after.out')
+
+      expect(before).to eq 'it worked!'
+      expect(after).to eq 'it worked! (v2)'
+    end
+
+    it 'persists across reloads for name spaced models' do
+      create_file 'tmp/new_product_extension.rb', alt_product_extension
+
+      script = %(
+        IO.write 'before.out', Online::Product.new.extension_method
+        FileUtils.cp 'tmp/new_product_extension.rb', 'drivers/store/extensions/product_extension.rb'
+        reload!
+        IO.write 'after.out', Online::Product.new.extension_method
       )
 
       run_command 'rails c', input: script
@@ -175,6 +250,30 @@ RSpec.describe 'Rails Driver Extensions' do
       expect(before).to eq 'it worked!'
       expect(after).to eq 'it worked'
     end
+
+    it 'does not include removed methods across reloads for named spaced models' do
+      create_file 'tmp/new_product_extension.rb', empty_product_extension
+
+      script = %(
+        IO.write 'before.out', Online::Product.new.extension_method
+        FileUtils.cp 'tmp/new_product_extension.rb', 'drivers/store/extensions/product_extension.rb'
+        reload!
+        begin
+          Online::Product.new.extension_method # This method should no longer be present!
+          IO.write 'after.out', 'it did not work'
+        rescue NoMethodError
+          IO.write 'after.out', 'it worked'
+        end
+      )
+
+      run_command 'rails c', input: script
+
+      before = read_file('before.out')
+      after = read_file('after.out')
+
+      expect(before).to eq 'it worked!'
+      expect(after).to eq 'it worked'
+    end
   end
 
   context 'with multiple extensions present' do
@@ -190,6 +289,14 @@ RSpec.describe 'Rails Driver Extensions' do
       extension_method_output = run_ruby %(puts Product.new.admin_method)
       expect(extension_method_output).to eq "admin method result\n"
     end
+
+    it 'includes both of them for name spaced models' do
+      extension_method_output = run_ruby %(puts Online::Product.new.extension_method)
+      expect(extension_method_output).to eq "it worked!\n"
+
+      extension_method_output = run_ruby %(puts Online::Product.new.admin_method)
+      expect(extension_method_output).to eq "admin method result\n"
+    end
   end
 
   context 'when an extension shadows a method in the overridden class' do
@@ -202,6 +309,13 @@ RSpec.describe 'Rails Driver Extensions' do
 
       expect(output).to include 'Driver extension method Store::ProductExtension#say_hello ' \
                                 'is shadowed by Product#say_hello and will likely not do anything.'
+    end
+
+    it 'issues a warning for name spaced models' do
+      output = run_command 'rails c', input: 'Online::Product', capture_stderr: true
+
+      expect(output).to include 'Driver extension method Store::ProductExtension#say_hello ' \
+                                'is shadowed by Online::Product#say_hello and will likely not do anything.'
     end
   end
 end
