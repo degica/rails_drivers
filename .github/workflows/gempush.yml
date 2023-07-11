@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Set up Ruby 3.0
-      uses: actions/setup-ruby@v1
+      uses: ruby/setup-ruby@v1
       with:
         version: '3.0'
 
