@@ -19,5 +19,9 @@ group :development, :test do
   gem 'irb'
   gem 'listen'
   gem 'pry-byebug'
+  gem 'rspec'
+  gem 'rspec-rails'
   gem 'rubocop', '~> 1.10'
+  gem 'sqlite3'
+  gem 'webpacker'
 end

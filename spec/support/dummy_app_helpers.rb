@@ -79,11 +79,11 @@ module DummyAppHelpers
     dir.pop
     FileUtils.mkdir_p(dir.join('/'))
 
-    File.open(full_path, 'w') { |f| f.write contents }
+    File.write(full_path, contents)
   end
 
   def read_file(file_name)
-    IO.read(File.join(dummy_app, file_name))
+    File.read(File.join(dummy_app, file_name))
   end
 
   #
@@ -95,7 +95,7 @@ module DummyAppHelpers
   end
 
   def dummy_app_template
-    File.expand_path File.join(__dir__, "../dummy_#{ENV['RAILS_VERSION']}")
+    File.expand_path File.join(__dir__, "../dummy_#{ENV.fetch('RAILS_VERSION', nil)}")
   end
 
   def setup_dummy_app
