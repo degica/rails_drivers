@@ -119,6 +119,8 @@ module DummyAppHelpers
   private
 
   def cp_r(src, dst)
+    # Depending on your machine's file system you may need to change
+    # the following command into system "cp -R #{src} #{dst}"
     system "cp -r --reflink=auto #{src} #{dst}"
   end
 
