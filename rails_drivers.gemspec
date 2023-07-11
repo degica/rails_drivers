@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.email       = ['nbaillie@degica.com']
   spec.homepage    = 'https://github.com/degica/rails_drivers'
   spec.summary     = 'De-coupled separation of concerns for Rails'
-  spec.description = 'Like Rails Engines, but without the friction. '\
+  spec.description = 'Like Rails Engines, but without the friction. ' \
                      "Your Rails app can't access them, and they can't access each other."
   spec.license     = 'MIT'
 
@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.5' # rubocop:disable Gemspec/RequiredRubyVersion
 
-  rails = case ENV['RAILS_VERSION']
+  rails = case ENV.fetch('RAILS_VERSION', nil)
           when '5.2'
             '~> 5.2'
           when '6.0'
@@ -34,8 +34,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'rails', rails
 
-  spec.add_development_dependency 'rspec'
-  spec.add_development_dependency 'rspec-rails'
-  spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency 'webpacker'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end
